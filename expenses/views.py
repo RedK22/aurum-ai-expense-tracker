@@ -2,9 +2,14 @@ from rest_framework import generics
 from .models import Expense,Category
 from .serializers import ExpenseSerializer,CategorySerializer
 from django.db.models import Q,Sum,Count
+from django.contrib.auth import authenticate, login
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import get_user_model,logout
+from rest_framework import status
+
+#======================EXPENSE VIEWS===========================
 
 class ExpenseListCreateView(generics.ListCreateAPIView):
     serializer_class = ExpenseSerializer
@@ -41,6 +46,8 @@ class SingleExpenseUpdateView(generics.RetrieveUpdateDestroyAPIView):
         queryset = Expense.objects.filter(user=self.request.user)
         return queryset
 
+#======================CATEGORY VIEWS===========================
+
 class CategoryListCreateView(generics.ListCreateAPIView):
   permission_classes=[IsAuthenticated]
   queryset=Category.objects.all()
@@ -58,3 +65,42 @@ class CategorySummaryView(APIView):
     
 
     return Response(queryset)
+  
+#======================SIGNUP LOGIN LOGOUT VIEWS===========================
+
+
+class SignUpView(APIView):
+  permission_classes = []
+  def post(self,request):
+    User = get_user_model()
+    user = request.data.get('username')
+    pwd = request.data.get('password')
+    if not user or not pwd:
+      return Response({'error':'Username or Password missing'},status=status.HTTP_400_BAD_REQUEST)
+    else:
+      if(not User.objects.filter(username=user).exists()):
+        User.objects.create_user(username=user,password=pwd)
+        return Response({"message": "User created"},status=status.HTTP_201_CREATED)
+      else:
+        return Response({'error':'Username already taken'},status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginView(APIView):
+  permission_classes = []
+  def post(self,request):
+    username = request.data.get('username')
+    pwd = request.data.get('password')
+    if not username or not pwd:
+      return Response({'error':'Missing Credentials'},status=status.HTTP_400_BAD_REQUEST)
+    user = authenticate(username=username,password=pwd)
+    if user==None:
+      return Response({'error':'Invalid Credentials'},status=status.HTTP_400_BAD_REQUEST)
+    else:
+      login(request,user)
+      return Response({'message':'Login successful'},status=status.HTTP_200_OK)
+
+class LogoutView(APIView):
+  permission_classes = [IsAuthenticated]
+  def post(self,request):
+    logout(request)
+    return Response({'message':'Logout successful'},status=status.HTTP_200_OK)
