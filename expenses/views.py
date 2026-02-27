@@ -74,15 +74,18 @@ class SignUpView(APIView):
   def post(self,request):
     User = get_user_model()
     user = request.data.get('username')
+    email=request.data.get('email')
     pwd = request.data.get('password')
-    if not user or not pwd:
-      return Response({'error':'Username or Password missing'},status=status.HTTP_400_BAD_REQUEST)
+    if not user or not pwd or not email:
+      return Response({'error':'Username, Email or Password missing'},status=status.HTTP_400_BAD_REQUEST)
     else:
-      if(not User.objects.filter(username=user).exists()):
-        User.objects.create_user(username=user,password=pwd)
+      if(not User.objects.filter(username=user).exists() and not User.objects.filter(email=email).exists()):
+        User.objects.create_user(username=user,password=pwd,email=email)
         return Response({"message": "User created"},status=status.HTTP_201_CREATED)
-      else:
+      elif(User.objects.filter(username=user).exists()):
         return Response({'error':'Username already taken'},status=status.HTTP_400_BAD_REQUEST)
+      else:
+        return Response({'error':'Email already taken'},status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
