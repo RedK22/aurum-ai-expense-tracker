@@ -85,7 +85,7 @@ GRANT ALL ON SCHEMA public TO expense_user;
 ```bash
 DB_NAME=expense_tracker
 DB_USER=expense_user
-DB_PASSWORD=strongpassword
+DB_PASSWORD=<your_password>
 DB_HOST=localhost
 DB_PORT=5432
 ```
