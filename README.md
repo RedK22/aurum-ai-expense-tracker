@@ -74,7 +74,8 @@ Inside psql:
 
 ```bash
 CREATE DATABASE expense_tracker;
-CREATE USER expense_user WITH PASSWORD 'strongpassword';
+CREATE USER expense_user WITH PASSWORD '<your_password>';
+\c expense_tracker
 ALTER SCHEMA public OWNER TO expense_user;
 GRANT ALL ON SCHEMA public TO expense_user;
 \q
@@ -146,6 +147,7 @@ Analytics:
 
 ## Planned Features:
 
+- Frontend with Next.js/React.js
 - PostgreSQL trigram-based fuzzy search
 - Natural language expense parsing
 - AI-assisted expense retrieval
