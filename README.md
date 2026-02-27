@@ -39,7 +39,7 @@ This project supports multi-user authentication, expense management, analytics, 
 ### 1. Clone Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/RedK22/expense-tracker
 cd expense-tracker
 ```
 
