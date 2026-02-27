@@ -79,9 +79,9 @@ class SignUpView(APIView):
     if not user or not pwd or not email:
       return Response({'error':'Username, Email or Password missing'},status=status.HTTP_400_BAD_REQUEST)
     else:
-      if(not User.objects.filter(username=user).exists()):
+      if(User.objects.filter(username=user).exists()):
         return Response({'error':'Username already taken'},status=status.HTTP_400_BAD_REQUEST)
-      if(not User.objects.filter(email=email).exists()):
+      if(User.objects.filter(email=email).exists()):
         return Response({'error':'Email already taken'},status=status.HTTP_400_BAD_REQUEST)
       User.objects.create_user(username=user,password=pwd,email=email)
       return Response({"message": "User created"},status=status.HTTP_201_CREATED)
