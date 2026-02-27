@@ -1,5 +1,6 @@
 from django.db import models
-from django.utils import timezone  
+from django.utils import timezone 
+from django.conf import settings
 
 def today():
     return timezone.now().date()
@@ -18,6 +19,7 @@ class Expense(models.Model):
   category=models.ForeignKey(Category,on_delete=models.PROTECT,related_name='expenses')
   date=models.DateField(default=today)
   note=models.TextField(blank=True)
+  user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='expenses')
 
   def __str__(self):
         return f"{self.title} - {self.amount}"

@@ -4,12 +4,17 @@ from .serializers import ExpenseSerializer,CategorySerializer
 from django.db.models import Q,Sum,Count
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 class ExpenseListCreateView(generics.ListCreateAPIView):
     serializer_class = ExpenseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self,serializer):
+      serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        queryset = Expense.objects.all()
+        queryset = Expense.objects.filter(user=self.request.user)
         from_date = self.request.query_params.get('from')
         to_date = self.request.query_params.get('to')
         query = self.request.query_params.get('q')
@@ -30,17 +35,22 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
         return queryset.order_by('-date')
 
 class SingleExpenseUpdateView(generics.RetrieveUpdateDestroyAPIView):
-  queryset=Expense.objects.all()
+  permission_classes=[IsAuthenticated]
   serializer_class=ExpenseSerializer
+  def get_queryset(self):
+        queryset = Expense.objects.filter(user=self.request.user)
+        return queryset
 
 class CategoryListCreateView(generics.ListCreateAPIView):
+  permission_classes=[IsAuthenticated]
   queryset=Category.objects.all()
   serializer_class=CategorySerializer
 
 
 class CategorySummaryView(APIView):
+  permission_classes=[IsAuthenticated]
   def get(self,request):
-    queryset=Expense.objects.all()
+    queryset=Expense.objects.filter(user=request.user)
     category_id = self.request.query_params.get('category')
     if category_id:
       queryset = queryset.filter(category_id=category_id)
