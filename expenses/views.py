@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model,logout
 from rest_framework import status
+from django.contrib.postgres.search import TrigramSimilarity
 
 #======================EXPENSE VIEWS===========================
 
@@ -23,8 +24,7 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
         from_date = self.request.query_params.get('from')
         to_date = self.request.query_params.get('to')
         query = self.request.query_params.get('q')
-        if query:
-          queryset = queryset.filter(Q(title__icontains=query) | Q(note__icontains=query))
+          
 
         category_id = self.request.query_params.get('category')
 
@@ -36,6 +36,13 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
 
         if category_id:
             queryset = queryset.filter(category_id=category_id)
+
+        if query:
+          queryset = queryset.annotate(
+            similarity=TrigramSimilarity('title',query)+TrigramSimilarity('note',query)
+          ).filter(similarity__gt=0.2)
+
+          return queryset.order_by('-similarity')
 
         return queryset.order_by('-date')
 
