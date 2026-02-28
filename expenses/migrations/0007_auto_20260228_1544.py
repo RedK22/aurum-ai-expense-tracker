@@ -5,8 +5,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('expenses', '0006_expense_user'),
-    ]
+    ('expenses', '0008_auto_20260228_1702'),  # the extension migration file
+]
 
     operations = [
         migrations.RunSQL(
