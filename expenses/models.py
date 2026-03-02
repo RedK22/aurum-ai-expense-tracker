@@ -1,13 +1,47 @@
 from django.db import models
 from django.utils import timezone 
 from django.conf import settings
-
+from django.db.models import Q
 def today():
     return timezone.now().date()
 
 # Create your models here.
+class CategoryScope(models.TextChoices):
+    GLOBAL = "GLOBAL", "Global"
+    PRIVATE = "PRIVATE", "Private"
+
 class Category(models.Model):
-    name=models.CharField(max_length=20, unique=True)
+    name=models.CharField(max_length=20)
+    scope = models.CharField(
+    max_length=10,
+    choices=CategoryScope.choices,
+    default=CategoryScope.GLOBAL
+)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [
+        # GLOBAL must not have a user
+        models.CheckConstraint(
+            condition=Q(scope="GLOBAL", user__isnull=True) | Q(scope="PRIVATE", user__isnull=False),
+            name="category_scope_user_consistency",
+        ),
+
+        # Unique GLOBAL names
+        models.UniqueConstraint(
+            fields=["name"],
+            condition=Q(scope="GLOBAL"),
+            name="unique_global_category_name",
+        ),
+
+        # Unique PRIVATE names per user
+        models.UniqueConstraint(
+            fields=["name", "user"],
+            condition=Q(scope="PRIVATE"),
+            name="unique_private_category_per_user",
+        ),
+    ]
 
     def __str__(self):
         return self.name

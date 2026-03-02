@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import Expense,Category
+from .models import Expense,Category,CategoryScope
 from .serializers import ExpenseSerializer,CategorySerializer
 from django.db.models import Q,Sum,Count
 from django.contrib.auth import authenticate, login
@@ -57,8 +57,17 @@ class SingleExpenseUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
 class CategoryListCreateView(generics.ListCreateAPIView):
   permission_classes=[IsAuthenticated]
-  queryset=Category.objects.all()
   serializer_class=CategorySerializer
+  def get_queryset(self):
+        user = self.request.user
+        queryset = Category.objects.filter(
+          Q(scope=CategoryScope.GLOBAL) | Q(user=user),
+          is_active = True
+        )
+        return queryset
+  def perform_create(self,serializer):
+    serializer.save(user=self.request.user,scope=CategoryScope.PRIVATE)
+
 
 
 class CategorySummaryView(APIView):
