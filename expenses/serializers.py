@@ -9,8 +9,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
   class Meta:
     model=Expense
-    fields= ['id','title','amount','date','note','category','category_name'] 
-
+    fields= ['id','title','amount','date','note','category','category_name']
   
   def validate_date(self, value):
     if value > timezone.now().date():

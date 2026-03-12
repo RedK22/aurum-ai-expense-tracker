@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import Expense,Category,CategoryScope
+from .models import Expense,Category,CategoryScope,RecurringExpenseModel,RecurringExpenseChoice
 from .serializers import ExpenseSerializer,CategorySerializer
 from django.db.models import Q,Sum,Count
 from django.contrib.auth import authenticate, login
@@ -9,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model,logout
 from rest_framework import status
 from django.contrib.postgres.search import TrigramSimilarity
+from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 
 #======================EXPENSE VIEWS===========================
 
@@ -20,6 +22,36 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
       serializer.save(user=self.request.user)
 
     def get_queryset(self):
+        # Query Recurring Expenses
+        rec_exp = RecurringExpenseModel.objects.filter(user=self.request.user, is_active=True)
+        today=timezone.now().date()
+        # Loop through them to create expenses
+        for rule in rec_exp:
+          if rule.last_generated is None:
+            next_date = rule.start_date
+          else:
+            if rule.frequency==RecurringExpenseChoice.MONTHLY:
+              next_date=rule.last_generated+ relativedelta(months=1)
+            else:
+              next_date =rule.last_generated+  relativedelta(years=1)
+
+          generated = False
+
+          while next_date <= today:
+            Expense.objects.create(
+              title=rule.title,amount=rule.amount,category=rule.category,user=rule.user,date=next_date
+            )
+            generated=True
+            rule.last_generated=next_date
+            
+            if rule.frequency==RecurringExpenseChoice.MONTHLY:
+              next_date = next_date + relativedelta(months=1)
+            else:
+              next_date = next_date + relativedelta(years=1)
+            
+          if generated:
+            rule.save()
+
         queryset = Expense.objects.filter(user=self.request.user)
         from_date = self.request.query_params.get('from')
         to_date = self.request.query_params.get('to')
