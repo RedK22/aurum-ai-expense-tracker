@@ -1,6 +1,6 @@
 from rest_framework import generics
 from .models import Expense,Category,CategoryScope,RecurringExpenseModel,RecurringExpenseChoice
-from .serializers import ExpenseSerializer,CategorySerializer
+from .serializers import ExpenseSerializer,CategorySerializer,RecurringExpenseSerializer
 from django.db.models import Q,Sum,Count
 from django.contrib.auth import authenticate, login
 from rest_framework.views import APIView
@@ -157,3 +157,22 @@ class LogoutView(APIView):
   def post(self,request):
     logout(request)
     return Response({'message':'Logout successful'},status=status.HTTP_200_OK)
+  
+################### RECURRING EXPENSES VIEW ############################
+
+class RecurringExpenseListCreateView(generics.ListCreateAPIView):
+  serializer_class=RecurringExpenseSerializer
+  permission_classes=[IsAuthenticated]
+
+  def get_queryset(self):
+    return RecurringExpenseModel.objects.filter(user=self.request.user)
+  
+  def perform_create(self,serializer):
+    serializer.save(user=self.request.user)
+
+class RecurringExpenseDetailView(generics.RetrieveUpdateDestroyAPIView):
+  serializer_class=RecurringExpenseSerializer
+  permission_classes=[IsAuthenticated]
+
+  def get_queryset(self):
+    return RecurringExpenseModel.objects.filter(user=self.request.user)

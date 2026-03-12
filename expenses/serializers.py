@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone
-from .models import Expense,Category,CategoryScope
+from .models import Expense,Category,CategoryScope,RecurringExpenseModel
 
 class ExpenseSerializer(serializers.ModelSerializer):
   category_name = serializers.CharField(source='category.name',read_only=True)
@@ -32,4 +32,9 @@ class CategorySerializer(serializers.ModelSerializer):
   class Meta:
     model=Category
     fields= ['id','name']
-    
+
+class RecurringExpenseSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = RecurringExpenseModel
+    fields="__all__"
+    read_only_fields=["user","last_generated"]
