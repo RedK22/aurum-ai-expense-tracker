@@ -12,6 +12,8 @@ from django.contrib.postgres.search import TrigramSimilarity
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.db import transaction
+from expenses.ai.parser import parse_user_message
+from expenses.ai.router import execute_ai_command
 
 #======================EXPENSE VIEWS===========================
 
@@ -176,3 +178,15 @@ class RecurringExpenseDetailView(generics.RetrieveUpdateDestroyAPIView):
 
   def get_queryset(self):
     return RecurringExpenseModel.objects.filter(user=self.request.user)
+  
+#################### AI VIEWS ##########################
+
+class AIQueryView(APIView):
+  permission_classes=[IsAuthenticated]
+  def post(self,request):
+    message=  request.data.get('message')
+    categories = Category.objects.filter(is_active=True).values_list('name',flat=True)
+    parsed=parse_user_message(message,categories)
+    result = execute_ai_command(parsed,request.user)
+
+    return Response(result)

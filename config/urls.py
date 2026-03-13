@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,LoginView,LogoutView,RecurringExpenseListCreateView,RecurringExpenseDetailView
+from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,LoginView,LogoutView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -11,5 +11,6 @@ urlpatterns = [
     path('api/auth/login/',LoginView.as_view(),name='login'),
     path('api/auth/logout/',LogoutView.as_view(),name='logout'),
     path('api/recurring/',RecurringExpenseListCreateView.as_view()),
-    path('api/recurring/<int:pk>/',RecurringExpenseDetailView.as_view())
+    path('api/recurring/<int:pk>/',RecurringExpenseDetailView.as_view()),
+    path('api/ai/query',AIQueryView.as_view()),
 ]
