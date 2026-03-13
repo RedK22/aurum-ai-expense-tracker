@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,LoginView,LogoutView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView
+from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 
 urlpatterns = [
