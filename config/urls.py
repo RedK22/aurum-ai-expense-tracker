@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,LoginView,LogoutView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView
+from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -8,9 +9,13 @@ urlpatterns = [
     path('api/categories/', CategoryListCreateView.as_view(), name='category-list-create'),
     path('api/analytics/category-summary/',CategorySummaryView.as_view(),name='category-summary-view'),
     path('api/auth/signup/',SignUpView.as_view(),name='signup'),
-    path('api/auth/login/',LoginView.as_view(),name='login'),
-    path('api/auth/logout/',LogoutView.as_view(),name='logout'),
+    # path('api/auth/login/',LoginView.as_view(),name='login'),
+    # path('api/auth/logout/',LogoutView.as_view(),name='logout'),
     path('api/recurring/',RecurringExpenseListCreateView.as_view()),
     path('api/recurring/<int:pk>/',RecurringExpenseDetailView.as_view()),
     path('api/ai/query',AIQueryView.as_view()),
+
+
+    path("api/token/",TokenObtainPairView.as_view(),name="token_obtain_pair"),
+    path("api/token/refresh/",TokenRefreshView.as_view(),name="token_refresh")
 ]

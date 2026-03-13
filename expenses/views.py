@@ -140,25 +140,25 @@ class SignUpView(APIView):
       
 
 
-class LoginView(APIView):
-  permission_classes = []
-  def post(self,request):
-    username = request.data.get('username')
-    pwd = request.data.get('password')
-    if not username or not pwd:
-      return Response({'error':'Missing Credentials'},status=status.HTTP_400_BAD_REQUEST)
-    user = authenticate(username=username,password=pwd)
-    if user==None:
-      return Response({'error':'Invalid Credentials'},status=status.HTTP_400_BAD_REQUEST)
-    else:
-      login(request,user)
-      return Response({'message':'Login successful'},status=status.HTTP_200_OK)
+# class LoginView(APIView):
+#   permission_classes = []
+#   def post(self,request):
+#     username = request.data.get('username')
+#     pwd = request.data.get('password')
+#     if not username or not pwd:
+#       return Response({'error':'Missing Credentials'},status=status.HTTP_400_BAD_REQUEST)
+#     user = authenticate(username=username,password=pwd)
+#     if user==None:
+#       return Response({'error':'Invalid Credentials'},status=status.HTTP_400_BAD_REQUEST)
+#     else:
+#       login(request,user)
+#       return Response({'message':'Login successful'},status=status.HTTP_200_OK)
 
-class LogoutView(APIView):
-  permission_classes = [IsAuthenticated]
-  def post(self,request):
-    logout(request)
-    return Response({'message':'Logout successful'},status=status.HTTP_200_OK)
+# class LogoutView(APIView):
+#   permission_classes = [IsAuthenticated]
+#   def post(self,request):
+#     logout(request)
+#     return Response({'message':'Logout successful'},status=status.HTTP_200_OK)
   
 ################### RECURRING EXPENSES VIEW ############################
 
