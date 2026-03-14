@@ -1,10 +1,16 @@
 from rest_framework import serializers
 from django.utils import timezone
 from .models import Expense,Category,CategoryScope,RecurringExpenseModel
+from decimal import Decimal
+
+###########################################
+###### EXPENSE SERIALIZER #################
+###########################################
+
 
 class ExpenseSerializer(serializers.ModelSerializer):
   category_name = serializers.CharField(source='category.name',read_only=True)
-  amount = serializers.DecimalField(max_digits=15, decimal_places=2, min_value=0.01)
+  amount = serializers.DecimalField(max_digits=15, decimal_places=2, min_value=Decimal("0.01"))
   date = serializers.DateField(required=False)
 
   class Meta:
@@ -27,11 +33,29 @@ class ExpenseSerializer(serializers.ModelSerializer):
     
     raise serializers.ValidationError("You cannot use this category.")
 
+
+###########################################
+###### CATEGORY SERIALIZER ################
+###########################################
+
+
 class CategorySerializer(serializers.ModelSerializer):
   
   class Meta:
     model=Category
-    fields= ['id','name']
+    fields= ['id','name','scope']
+  
+  def validate(self,data):
+    user=self.context['request'].user
+
+    if data.get('scope')=="GLOBAL" and not user.is_staff:
+      raise serializers.ValidationError("Only admins can create global categories")
+    return data
+
+
+###########################################
+###### RECURRING EXPENSE SERIALIZER #######
+###########################################
 
 class RecurringExpenseSerializer(serializers.ModelSerializer):
   class Meta:

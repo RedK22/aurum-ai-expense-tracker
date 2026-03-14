@@ -100,7 +100,7 @@ class CategoryListCreateView(generics.ListCreateAPIView):
           Q(scope=CategoryScope.GLOBAL) | Q(user=user),
           is_active = True
         )
-        return queryset
+        return queryset.order_by("name", "id")
   def perform_create(self,serializer):
     serializer.save(user=self.request.user,scope=CategoryScope.PRIVATE)
 

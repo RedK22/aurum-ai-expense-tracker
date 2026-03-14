@@ -2,6 +2,26 @@
 
 from django.db import migrations
 
+
+def create_trigram_indexes(apps, schema_editor):
+    if schema_editor.connection.vendor != "postgresql":
+        return
+
+    schema_editor.execute(
+        "CREATE INDEX expense_title_trgm_idx ON expenses_expense USING GIN (title gin_trgm_ops);"
+    )
+    schema_editor.execute(
+        "CREATE INDEX expense_note_trgm_idx ON expenses_expense USING GIN (note gin_trgm_ops);"
+    )
+
+
+def drop_trigram_indexes(apps, schema_editor):
+    if schema_editor.connection.vendor != "postgresql":
+        return
+
+    schema_editor.execute("DROP INDEX IF EXISTS expense_title_trgm_idx;")
+    schema_editor.execute("DROP INDEX IF EXISTS expense_note_trgm_idx;")
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -9,12 +29,5 @@ class Migration(migrations.Migration):
 ]
 
     operations = [
-        migrations.RunSQL(
-    sql="CREATE INDEX expense_title_trgm_idx ON expenses_expense USING GIN (title gin_trgm_ops);" ,    
-    reverse_sql="DROP INDEX IF EXISTS expense_title_trgm_idx;" 
-),
-migrations.RunSQL(
-    sql="CREATE INDEX expense_note_trgm_idx ON expenses_expense USING GIN (note gin_trgm_ops);",
-    reverse_sql=  "DROP INDEX IF EXISTS expense_note_trgm_idx;"
-)
+        migrations.RunPython(create_trigram_indexes, drop_trigram_indexes),
     ]
