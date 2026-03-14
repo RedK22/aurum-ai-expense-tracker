@@ -3,6 +3,8 @@ from .models import Expense,Category,CategoryScope,RecurringExpenseModel,Recurri
 from .serializers import ExpenseSerializer,CategorySerializer,RecurringExpenseSerializer
 from django.db.models import Q,Sum,Count
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -125,9 +127,13 @@ class SignUpView(APIView):
   permission_classes = []
   def post(self,request):
     User = get_user_model()
-    user = request.data.get('username')
-    email=request.data.get('email')
+    user = request.data.get('username').strip().lower()
+    email=request.data.get('email').strip().lower()
     pwd = request.data.get('password')
+    try: 
+      validate_password(pwd)
+    except ValidationError as e:
+      return Response({'error':e.messages},status=status.HTTP_400_BAD_REQUEST)
     if not user or not pwd or not email:
       return Response({'error':'Username, Email or Password missing'},status=status.HTTP_400_BAD_REQUEST)
     else:
