@@ -77,7 +77,13 @@ def execute_ai_command(command, user):
 
         return {
             "message": f"Expense created for {amount}",
-            "amount": amount
+            "amount": amount,
+            "expense":{
+                "title": expense.title,
+                "amount": float(expense.amount),
+                "category": expense.category.name,
+                "date": expense.date
+    }
         }
 
     # ======================
@@ -106,8 +112,21 @@ def execute_ai_command(command, user):
 
         total = queryset.aggregate(total=Sum("amount"))["total"] or 0
 
-        if period:
-            message = f"You spent {total} this {period}"
+        if period == "today":
+            message = f"You spent {total} today"
+
+        elif period == "week":
+            message = f"You spent {total} this week"
+
+        elif period == "month":
+            message = f"You spent {total} this month"
+
+        elif period == "year":
+            message = f"You spent {total} this year"
+
+        elif period:
+            message = f"You spent {total} in the last {period}"
+
         else:
             message = f"You spent {total} in total"
 
