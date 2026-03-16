@@ -35,9 +35,13 @@ export default function ExpenseList() {
     to: undefined,
   });
 
+  const [page, setPage] = useState(1);
+  const [nextPage, setNextPage] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
+
   useEffect(() => {
     fetchExpenses();
-  }, [search, category, dateRange]);
+  }, [search, category, dateRange, page]);
 
   useEffect(() => {
     fetchCategories();
@@ -59,6 +63,8 @@ export default function ExpenseList() {
 
       const params = new URLSearchParams();
 
+      params.append("page", page);
+
       if (search) params.append("q", search);
 
       if (category !== "all") {
@@ -75,9 +81,12 @@ export default function ExpenseList() {
 
       const data = await apiRequest(`/expenses/?${params.toString()}`);
 
-      const expenseList = Array.isArray(data) ? data : data.results || [];
+      const expenseList = data.results || [];
 
       setExpenses(expenseList);
+      setNextPage(data.next);
+      setPrevPage(data.previous);
+
       setError(null);
     } catch (err) {
       setError(err.message || "Failed to load expenses");
@@ -90,6 +99,7 @@ export default function ExpenseList() {
     setSearch("");
     setCategory("all");
     setDateRange({from: undefined, to: undefined});
+    setPage(1);
   }
 
   function formatRange() {
@@ -123,11 +133,20 @@ export default function ExpenseList() {
         <Input
           placeholder="Search expenses..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           className="w-[200px]"
         />
 
-        <Select value={category} onValueChange={setCategory}>
+        <Select
+          value={category}
+          onValueChange={(val) => {
+            setCategory(val);
+            setPage(1);
+          }}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
@@ -153,7 +172,10 @@ export default function ExpenseList() {
             <Calendar
               mode="range"
               selected={dateRange}
-              onSelect={setDateRange}
+              onSelect={(range) => {
+                setDateRange(range);
+                setPage(1);
+              }}
               numberOfMonths={2}
             />
           </PopoverContent>
@@ -183,16 +205,39 @@ export default function ExpenseList() {
 
       {/* Expense list */}
       {!loading && !error && expenses.length > 0 && (
-        <div className="space-y-4">
-          {expenses.map((expense) => (
-            <ExpenseCard
-              key={expense.id}
-              expense={expense}
-              onDeleted={handleDeletedExpense}
-              onUpdated={handleUpdatedExpense}
-            />
-          ))}
-        </div>
+        <>
+          <div className="space-y-4">
+            {expenses.map((expense) => (
+              <ExpenseCard
+                key={expense.id}
+                expense={expense}
+                onDeleted={handleDeletedExpense}
+                onUpdated={handleUpdatedExpense}
+              />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-between pt-4">
+            <Button
+              variant="outline"
+              disabled={!prevPage}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Previous
+            </Button>
+
+            <span className="text-sm text-muted-foreground">Page {page}</span>
+
+            <Button
+              variant="outline"
+              disabled={!nextPage}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        </>
       )}
     </div>
   );
