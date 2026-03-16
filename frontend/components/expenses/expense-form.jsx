@@ -22,9 +22,24 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {StaggerButton} from "../ui/stagger-button";
 
-export default function ExpenseForm({onCreated}) {
+export default function ExpenseForm({
+  onCreated,
+  hideHeader = false,
+  buttonLabel = "Add Expense",
+  modal = false,
+  triggerLabel = "+ Expense",
+}) {
+  const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
@@ -86,6 +101,9 @@ export default function ExpenseForm({onCreated}) {
       setDate("");
       setNote("");
 
+      if (modal) {
+        setOpen(false);
+      }
       if (onCreated) {
         onCreated(newExpense);
       }
@@ -102,17 +120,85 @@ export default function ExpenseForm({onCreated}) {
     }
   }
 
+  if (modal) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <StaggerButton>{triggerLabel}</StaggerButton>
+        </DialogTrigger>
+        <DialogContent className="bg-transparent backdrop-blur-md">
+          <DialogHeader>
+            <DialogTitle>Add Expense</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <div className="space-y-2">
+              <Label>Title</Label>
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Amount</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <Select
+                value={category}
+                onValueChange={(val) => setCategory(val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={String(cat.id)}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Date (optional)</Label>
+              <Input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Note</Label>
+              <Input value={note} onChange={(e) => setNote(e.target.value)} />
+            </div>
+            <StaggerButton type="submit" disabled={loading} className="w-full">
+              {loading ? "Adding..." : buttonLabel}
+            </StaggerButton>
+          </form>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+  // Default: render as card (non-modal)
   return (
     <Card className="bg-transparent backdrop-blur-md">
-      <CardHeader>
-        <CardTitle>Add Expense</CardTitle>
-      </CardHeader>
-
+      {!hideHeader && (
+        <CardHeader>
+          <CardTitle>Add Expense</CardTitle>
+        </CardHeader>
+      )}
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && <p className="text-sm text-red-500">{error}</p>}
-
-          {/* Title */}
           <div className="space-y-2">
             <Label>Title</Label>
             <Input
@@ -121,8 +207,6 @@ export default function ExpenseForm({onCreated}) {
               required
             />
           </div>
-
-          {/* Amount */}
           <div className="space-y-2">
             <Label>Amount</Label>
             <Input
@@ -133,16 +217,12 @@ export default function ExpenseForm({onCreated}) {
               required
             />
           </div>
-
-          {/* Category */}
           <div className="space-y-2">
             <Label>Category</Label>
-
             <Select value={category} onValueChange={(val) => setCategory(val)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
-
               <SelectContent>
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={String(cat.id)}>
@@ -152,8 +232,6 @@ export default function ExpenseForm({onCreated}) {
               </SelectContent>
             </Select>
           </div>
-
-          {/* Date */}
           <div className="space-y-2">
             <Label>Date (optional)</Label>
             <Input
@@ -162,15 +240,12 @@ export default function ExpenseForm({onCreated}) {
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
-
-          {/* Note */}
           <div className="space-y-2">
             <Label>Note</Label>
             <Input value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
-
           <StaggerButton type="submit" disabled={loading} className="w-full">
-            {loading ? "Adding..." : "Add Expense"}
+            {loading ? "Adding..." : buttonLabel}
           </StaggerButton>
         </form>
       </CardContent>

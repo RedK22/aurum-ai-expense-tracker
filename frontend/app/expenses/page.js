@@ -10,7 +10,7 @@ export default function ExpensesPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Expenses</h1>
 
-      <ExpenseForm />
+      <ExpenseForm modal triggerLabel={"+ Expense"} buttonLabel={"Add"} />
 
       <Separator />
 
