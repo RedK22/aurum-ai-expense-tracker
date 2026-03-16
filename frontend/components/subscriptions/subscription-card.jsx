@@ -1,7 +1,9 @@
 "use client";
 
 import {useState} from "react";
+
 import {apiRequest} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {Card, CardContent} from "@/components/ui/card";
 import {Switch} from "@/components/ui/switch";
@@ -23,10 +25,21 @@ export default function SubscriptionCard({subscription, onUpdated}) {
         }),
       });
 
+      toast({
+        type: "success",
+        title: checked ? "Subscription activated" : "Subscription deactivated",
+        description: `Subscription '${subscription.title}' is now ${checked ? "active" : "inactive"}.`,
+      });
+
       onUpdated(updated);
     } catch {
       // revert toggle if request fails
       setActive(!checked);
+      toast({
+        type: "error",
+        title: "Status update failed",
+        description: `Could not update subscription status.`,
+      });
     } finally {
       setLoading(false);
     }

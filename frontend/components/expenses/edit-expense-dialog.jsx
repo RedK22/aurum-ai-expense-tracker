@@ -1,7 +1,9 @@
 "use client";
 
 import {useEffect, useState} from "react";
+
 import {apiRequest} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {
   Dialog,
@@ -83,6 +85,12 @@ export default function EditExpenseDialog({expense, onUpdated}) {
         body: JSON.stringify(payload),
       });
 
+      toast({
+        type: "success",
+        title: "Expense updated",
+        description: `Expense '${title}' updated successfully.`,
+      });
+
       if (onUpdated) {
         onUpdated(updated);
       }
@@ -90,6 +98,11 @@ export default function EditExpenseDialog({expense, onUpdated}) {
       setOpen(false);
     } catch (err) {
       setError(err.message || "Failed to update expense");
+      toast({
+        type: "error",
+        title: "Expense update failed",
+        description: err.message || "Could not update expense.",
+      });
     } finally {
       setLoading(false);
     }

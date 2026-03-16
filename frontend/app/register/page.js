@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiRequest} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
@@ -33,10 +34,19 @@ export default function RegisterPage() {
           password,
         }),
       });
-
+      toast({
+        type: "success",
+        title: "Registration successful",
+        description: `Account created for ${username}. Please log in.`,
+      });
       router.push("/login");
     } catch (err) {
       setError(err.message || "Registration failed");
+      toast({
+        type: "error",
+        title: "Registration failed",
+        description: err.message || "Could not create account",
+      });
     } finally {
       setLoading(false);
     }

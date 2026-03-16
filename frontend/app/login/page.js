@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {login} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
@@ -25,10 +26,19 @@ export default function LoginPage() {
 
     try {
       await login(username, password);
-
+      toast({
+        type: "success",
+        title: "Login successful",
+        description: `Welcome back, ${username}!`,
+      });
       router.push("/dashboard");
     } catch (err) {
       setError(err.message || "Login failed");
+      toast({
+        type: "error",
+        title: "Login failed",
+        description: err.message || "Invalid credentials",
+      });
     } finally {
       setLoading(false);
     }

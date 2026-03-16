@@ -1,9 +1,11 @@
 import {Geist, Geist_Mono} from "next/font/google";
 import {Roboto} from "next/font/google";
 import "./globals.css";
+
 import {TooltipProvider} from "@/components/ui/tooltip";
 import Navbar from "@/components/navbar";
 import {ThemeProvider} from "@/components/theme-provider";
+import {Toaster} from "@/components/optics/sonner";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -45,6 +47,8 @@ export default function RootLayout({children}) {
               </TooltipProvider>
             </ThemeProvider>
           </div>
+          {/* Sonner Toaster for global toast notifications */}
+          <Toaster position="bottom-right" richColors closeButton />
         </div>
       </body>
     </html>

@@ -1,7 +1,8 @@
 "use client";
 
 import {useState} from "react";
-import {apiRequest} from "@/lib/api";
+
+import {toast} from "@/components/optics/sonner";
 
 import {
   Dialog,
@@ -32,11 +33,22 @@ export default function CreateCategoryDialog({onCreated}) {
         }),
       });
 
+      toast({
+        type: "success",
+        title: "Category created",
+        description: `Category '${name}' created successfully.`,
+      });
+
       onCreated(created);
       setOpen(false);
       setName("");
     } catch (err) {
       setError(err.message || "Failed to create category");
+      toast({
+        type: "error",
+        title: "Category creation failed",
+        description: err.message || "Could not create category.",
+      });
     }
   }
 

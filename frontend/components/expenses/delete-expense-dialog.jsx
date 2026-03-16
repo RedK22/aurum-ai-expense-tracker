@@ -1,7 +1,9 @@
 "use client";
 
 import {useState} from "react";
+
 import {apiRequest} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {
   AlertDialog,
@@ -30,6 +32,12 @@ export default function DeleteExpenseDialog({expenseId, onDeleted}) {
         method: "DELETE",
       });
 
+      toast({
+        type: "success",
+        title: "Expense deleted",
+        description: `Expense deleted successfully.`,
+      });
+
       if (onDeleted) {
         onDeleted(expenseId);
       }
@@ -37,6 +45,11 @@ export default function DeleteExpenseDialog({expenseId, onDeleted}) {
       setOpen(false);
     } catch (err) {
       setError(err.message || "Failed to delete expense");
+      toast({
+        type: "error",
+        title: "Expense deletion failed",
+        description: err.message || "Could not delete expense.",
+      });
     } finally {
       setLoading(false);
     }

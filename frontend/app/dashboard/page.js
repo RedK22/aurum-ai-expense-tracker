@@ -9,7 +9,6 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Separator} from "@/components/ui/separator";
 
 import ChatContainer from "@/components/chat/chat-container";
-import ChatInput from "@/components/chat/chat-input";
 
 import {PieChart, Pie, Cell, Tooltip, ResponsiveContainer} from "recharts";
 

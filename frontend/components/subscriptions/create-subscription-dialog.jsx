@@ -1,7 +1,8 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {apiRequest} from "@/lib/api";
+
+import {toast} from "@/components/optics/sonner";
 
 import {
   Dialog,
@@ -60,10 +61,21 @@ export default function CreateSubscriptionDialog({onCreated}) {
         }),
       });
 
+      toast({
+        type: "success",
+        title: "Subscription created",
+        description: `Subscription '${title}' created successfully.`,
+      });
+
       onCreated(created);
       setOpen(false);
     } catch (err) {
       setError(err.message || "Failed to create subscription");
+      toast({
+        type: "error",
+        title: "Subscription creation failed",
+        description: err.message || "Could not create subscription.",
+      });
     }
   }
 

@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from "react";
 import {apiRequest} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
@@ -67,6 +68,12 @@ export default function ExpenseForm({onCreated}) {
         body: JSON.stringify(payload),
       });
 
+      toast({
+        type: "success",
+        title: "Expense added",
+        description: `Expense '${title}' created successfully.`,
+      });
+
       setTitle("");
       setAmount("");
       setCategory("");
@@ -78,6 +85,11 @@ export default function ExpenseForm({onCreated}) {
       }
     } catch (err) {
       setError(err.message || "Failed to create expense");
+      toast({
+        type: "error",
+        title: "Expense creation failed",
+        description: err.message || "Could not create expense.",
+      });
     } finally {
       setLoading(false);
     }

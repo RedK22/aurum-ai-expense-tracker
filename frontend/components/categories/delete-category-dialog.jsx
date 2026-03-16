@@ -1,7 +1,9 @@
 "use client";
 
 import {useState, useEffect} from "react";
+
 import {apiRequest} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {
   AlertDialog,
@@ -37,6 +39,12 @@ export default function DeleteCategoryDialog({category, onDeleted, disabled}) {
         method: "DELETE",
       });
 
+      toast({
+        type: "success",
+        title: "Category deleted",
+        description: `Category '${category.name}' deleted successfully.`,
+      });
+
       if (onDeleted) {
         onDeleted(category.id);
       }
@@ -44,6 +52,11 @@ export default function DeleteCategoryDialog({category, onDeleted, disabled}) {
       setOpen(false);
     } catch (err) {
       setError(err.message || "Failed to delete category");
+      toast({
+        type: "error",
+        title: "Category deletion failed",
+        description: err.message || "Could not delete category.",
+      });
     } finally {
       setLoading(false);
     }

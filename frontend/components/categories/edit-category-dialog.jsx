@@ -1,7 +1,9 @@
 "use client";
 
 import {useEffect, useState} from "react";
+
 import {apiRequest} from "@/lib/api";
+import {toast} from "@/components/optics/sonner";
 
 import {
   Dialog,
@@ -43,6 +45,12 @@ export default function EditCategoryDialog({category, onUpdated, disabled}) {
         }),
       });
 
+      toast({
+        type: "success",
+        title: "Category updated",
+        description: `Category '${name}' updated successfully.`,
+      });
+
       if (onUpdated) {
         onUpdated(updated);
       }
@@ -50,6 +58,11 @@ export default function EditCategoryDialog({category, onUpdated, disabled}) {
       setOpen(false);
     } catch (err) {
       setError(err.message || "Failed to update category");
+      toast({
+        type: "error",
+        title: "Category update failed",
+        description: err.message || "Could not update category.",
+      });
     } finally {
       setLoading(false);
     }
