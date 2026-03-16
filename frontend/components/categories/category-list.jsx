@@ -7,7 +7,6 @@ import CategoryItem from "./category-item";
 import CreateCategoryDialog from "./create-category-dialog";
 
 import {Skeleton} from "@/components/ui/skeleton";
-import {Button} from "@/components/ui/button";
 
 export default function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -22,18 +21,22 @@ export default function CategoryList() {
       const data = await apiRequest("/categories/");
       const list = Array.isArray(data) ? data : data.results || [];
       setCategories(list);
+    } catch (err) {
+      console.error("Failed to fetch categories");
     } finally {
       setLoading(false);
     }
   }
 
+  /* ---------- LOCAL STATE UPDATES ---------- */
+
   function addCategory(category) {
     setCategories((prev) => [...prev, category]);
   }
 
-  function updateCategory(updated) {
+  function updateCategory(updatedCategory) {
     setCategories((prev) =>
-      prev.map((c) => (c.id === updated.id ? updated : c)),
+      prev.map((c) => (c.id === updatedCategory.id ? updatedCategory : c)),
     );
   }
 

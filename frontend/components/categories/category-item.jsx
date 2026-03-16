@@ -1,12 +1,13 @@
 "use client";
 
 import {Card, CardContent} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
 
 import EditCategoryDialog from "./edit-category-dialog";
 import DeleteCategoryDialog from "./delete-category-dialog";
 
 export default function CategoryItem({category, onUpdated, onDeleted}) {
+  if (!category) return null;
+
   const isGlobal = category.scope === "GLOBAL";
 
   return (
@@ -17,19 +18,14 @@ export default function CategoryItem({category, onUpdated, onDeleted}) {
           <p className="text-xs text-muted-foreground">{category.scope}</p>
         </div>
 
-        <div className="flex gap-2">
-          <EditCategoryDialog
-            category={category}
-            onUpdated={onUpdated}
-            disabled={isGlobal}
-          />
+        {/* Only show actions for non-global categories */}
+        {!isGlobal && (
+          <div className="flex gap-2">
+            <EditCategoryDialog category={category} onUpdated={onUpdated} />
 
-          <DeleteCategoryDialog
-            category={category}
-            onDeleted={onDeleted}
-            disabled={isGlobal}
-          />
-        </div>
+            <DeleteCategoryDialog category={category} onDeleted={onDeleted} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
