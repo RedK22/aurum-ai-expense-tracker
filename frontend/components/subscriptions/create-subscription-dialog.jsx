@@ -10,11 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
+import {Button} from "@/components/optics/button";
+import {Input} from "@/components/optics/input";
+import {Label} from "@/components/optics/label";
+import {apiRequest} from "@/lib/api";
 
 import {
   Select,
@@ -40,10 +42,21 @@ export default function CreateSubscriptionDialog({onCreated}) {
     fetchCategories();
   }, []);
 
+  // Reset dropdowns on dialog open
+  useEffect(() => {
+    if (open) {
+      setCategory("");
+      setFrequency("");
+    }
+  }, [open]);
+
   async function fetchCategories() {
     const data = await apiRequest("/categories/");
     const list = Array.isArray(data) ? data : data.results || [];
-    setCategories(list);
+    // Filter for both GLOBAL and PRIVATE categories
+    setCategories(
+      list.filter((cat) => cat.scope === "GLOBAL" || cat.scope === "PRIVATE"),
+    );
   }
 
   async function handleCreate(e) {
@@ -85,14 +98,21 @@ export default function CreateSubscriptionDialog({onCreated}) {
         <Button>+ Subscription</Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="bg-transparent backdrop-blur-md">
         <DialogHeader>
           <DialogTitle>Create Subscription</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="subscription-dialog-desc">
+          Fill in the details to create a new recurring subscription.
+        </DialogDescription>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <form onSubmit={handleCreate} className="space-y-4">
+        <form
+          onSubmit={handleCreate}
+          className="space-y-4"
+          aria-describedby="subscription-dialog-desc"
+        >
           <div className="space-y-2">
             <Label>Title</Label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -110,7 +130,7 @@ export default function CreateSubscriptionDialog({onCreated}) {
           <div className="space-y-2">
             <Label>Category</Label>
 
-            <Select onValueChange={setCategory}>
+            <Select value={category} onValueChange={setCategory}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -128,7 +148,7 @@ export default function CreateSubscriptionDialog({onCreated}) {
           <div className="space-y-2">
             <Label>Frequency</Label>
 
-            <Select onValueChange={setFrequency}>
+            <Select value={frequency} onValueChange={setFrequency}>
               <SelectTrigger>
                 <SelectValue placeholder="Select frequency" />
               </SelectTrigger>
@@ -150,7 +170,7 @@ export default function CreateSubscriptionDialog({onCreated}) {
             />
           </div>
 
-          <Button>Create</Button>
+          <Button type="submit">Create</Button>
         </form>
       </DialogContent>
     </Dialog>

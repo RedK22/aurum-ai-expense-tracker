@@ -7,7 +7,7 @@ import DeleteExpenseDialog from "./delete-expense-dialog";
 
 export default function ExpenseCard({expense, onDeleted, onUpdated}) {
   return (
-    <Card>
+    <Card className="bg-transparent backdrop-blur-md">
       <CardContent className="flex justify-between items-start gap-6 py-4">
         <div className="flex-1 min-w-0">
           <p className="font-semibold">{expense.title}</p>

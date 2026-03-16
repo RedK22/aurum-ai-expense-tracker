@@ -15,7 +15,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/optics/button";
 
 export default function DeleteCategoryDialog({category, onDeleted, disabled}) {
   const [open, setOpen] = useState(false);

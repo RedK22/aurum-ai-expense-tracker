@@ -16,7 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/optics/button";
 
 export default function DeleteExpenseDialog({expenseId, onDeleted}) {
   const [open, setOpen] = useState(false);

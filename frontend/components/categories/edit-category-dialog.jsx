@@ -13,9 +13,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
+import {Button} from "@/components/optics/button";
+import {Input} from "@/components/optics/input";
+import {Label} from "@/components/optics/label";
 
 export default function EditCategoryDialog({category, onUpdated, disabled}) {
   const [open, setOpen] = useState(false);
@@ -76,7 +76,7 @@ export default function EditCategoryDialog({category, onUpdated, disabled}) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="bg-transparent backdrop-blur-md">
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>
         </DialogHeader>
@@ -90,7 +90,7 @@ export default function EditCategoryDialog({category, onUpdated, disabled}) {
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
-          <Button disabled={loading}>
+          <Button type="submit" disabled={loading}>
             {loading ? "Updating..." : "Update"}
           </Button>
         </form>

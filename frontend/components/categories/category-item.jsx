@@ -11,7 +11,7 @@ export default function CategoryItem({category, onUpdated, onDeleted}) {
   const isGlobal = category.scope === "GLOBAL";
 
   return (
-    <Card>
+    <Card className="bg-transparent backdrop-blur-md">
       <CardContent className="flex justify-between items-center py-4">
         <div>
           <p className="font-medium">{category.name}</p>

@@ -12,9 +12,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
+import {Button} from "@/components/optics/button";
+import {Input} from "@/components/optics/input";
+import {Label} from "@/components/optics/label";
+import {apiRequest} from "@/lib/api";
 
 export default function CreateCategoryDialog({onCreated}) {
   const [open, setOpen] = useState(false);
@@ -58,7 +59,7 @@ export default function CreateCategoryDialog({onCreated}) {
         <Button>+ Category</Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="bg-transparent backdrop-blur-md">
         <DialogHeader>
           <DialogTitle>Create Category</DialogTitle>
         </DialogHeader>
@@ -71,7 +72,7 @@ export default function CreateCategoryDialog({onCreated}) {
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
-          <Button>Create</Button>
+          <Button type="submit">Create</Button>
         </form>
       </DialogContent>
     </Dialog>

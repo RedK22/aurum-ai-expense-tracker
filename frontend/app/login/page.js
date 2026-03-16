@@ -5,10 +5,15 @@ import {useRouter} from "next/navigation";
 import {login} from "@/lib/api";
 import {toast} from "@/components/optics/sonner";
 
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/optics/card";
+import {Input} from "@/components/optics/input";
+import {Button} from "@/components/optics/button";
+import {Label} from "@/components/optics/label";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,7 +51,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-[400px]">
+      <Card className="w-100 bg-transparent backdrop-blur-md">
         <CardHeader>
           <CardTitle>Login</CardTitle>
         </CardHeader>
@@ -72,11 +77,20 @@ export default function LoginPage() {
               />
             </div>
             {error && <div className="text-sm text-red-500">{error}</div>}
-            <Button className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <span
+            className="text-primary cursor-pointer underline hover:opacity-80"
+            onClick={() => router.push("/register")}
+          >
+            Create here
+          </span>
+        </p>
       </Card>
     </div>
   );

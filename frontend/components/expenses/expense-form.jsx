@@ -4,10 +4,16 @@ import {useEffect, useState} from "react";
 import {apiRequest} from "@/lib/api";
 import {toast} from "@/components/optics/sonner";
 
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/optics/card";
+
+import {Input} from "@/components/optics/input";
+import {Button} from "@/components/optics/button";
+import {Label} from "@/components/optics/label";
 
 import {
   Select,
@@ -37,7 +43,6 @@ export default function ExpenseForm({onCreated}) {
     try {
       const data = await apiRequest("/categories/");
 
-      // Handle DRF pagination or plain array
       const categoryList = Array.isArray(data) ? data : data.results || [];
 
       setCategories(categoryList);
@@ -85,6 +90,7 @@ export default function ExpenseForm({onCreated}) {
       }
     } catch (err) {
       setError(err.message || "Failed to create expense");
+
       toast({
         type: "error",
         title: "Expense creation failed",
@@ -96,7 +102,7 @@ export default function ExpenseForm({onCreated}) {
   }
 
   return (
-    <Card>
+    <Card className="bg-transparent backdrop-blur-md">
       <CardHeader>
         <CardTitle>Add Expense</CardTitle>
       </CardHeader>
@@ -131,7 +137,7 @@ export default function ExpenseForm({onCreated}) {
           <div className="space-y-2">
             <Label>Category</Label>
 
-            <Select value={category} onValueChange={setCategory}>
+            <Select value={category} onValueChange={(val) => setCategory(val)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -162,7 +168,7 @@ export default function ExpenseForm({onCreated}) {
             <Input value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
 
-          <Button disabled={loading} className="w-full">
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Adding..." : "Add Expense"}
           </Button>
         </form>

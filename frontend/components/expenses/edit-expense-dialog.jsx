@@ -13,9 +13,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
+import {Button} from "@/components/optics/button";
+import {Input} from "@/components/optics/input";
+import {Label} from "@/components/optics/label";
 
 import {
   Select,
@@ -60,7 +60,7 @@ export default function EditExpenseDialog({expense, onUpdated}) {
       setAmount(expense.amount);
       setNote(expense.note || "");
       setDate(expense.date || "");
-      setCategory(String(expense.category));
+      setCategory(expense.category ? String(expense.category) : "");
       setError(null);
     }
   }, [open, expense]);
@@ -116,7 +116,7 @@ export default function EditExpenseDialog({expense, onUpdated}) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="bg-transparent backdrop-blur-md">
         <DialogHeader>
           <DialogTitle>Edit Expense</DialogTitle>
         </DialogHeader>
@@ -171,7 +171,7 @@ export default function EditExpenseDialog({expense, onUpdated}) {
             <Input value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
 
-          <Button disabled={loading}>
+          <Button type="submit" disabled={loading}>
             {loading ? "Updating..." : "Update Expense"}
           </Button>
         </form>

@@ -6,8 +6,8 @@ import {apiRequest} from "@/lib/api";
 import ExpenseCard from "./expense-card";
 
 import {Skeleton} from "@/components/ui/skeleton";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@/components/optics/input";
+import {Button} from "@/components/optics/button";
 
 import {
   Select,
@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/optics/select";
 
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Calendar} from "@/components/ui/calendar";
@@ -137,7 +137,7 @@ export default function ExpenseList() {
             setSearch(e.target.value);
             setPage(1);
           }}
-          className="w-[200px]"
+          className="w-50"
         />
 
         <Select
@@ -147,8 +147,13 @@ export default function ExpenseList() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Category" />
+          <SelectTrigger className="w-45">
+            <SelectValue placeholder="Category">
+              {category === "all"
+                ? "All Categories"
+                : categories.find((c) => String(c.id) === category)?.name ||
+                  "Category"}
+            </SelectValue>
           </SelectTrigger>
 
           <SelectContent>

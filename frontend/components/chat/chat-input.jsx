@@ -1,8 +1,8 @@
 "use client";
 
 import {useState} from "react";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@/components/optics/input";
+import {Button} from "@/components/optics/button";
 
 export default function ChatInput({onSend}) {
   const [text, setText] = useState("");
