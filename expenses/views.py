@@ -120,6 +120,13 @@ class CategorySummaryView(APIView):
 
     return Response(queryset)
   
+
+class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
+  serializer_class=CategorySerializer
+  permission_classes=[IsAuthenticated]
+
+  def get_queryset(self):
+    return Category.objects.filter(scope = CategoryScope.PRIVATE, user = self.request.user)
 #======================SIGNUP LOGIN LOGOUT VIEWS===========================
 
 

@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
-from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView
+from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView,CategoryDetailView
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/expenses/', include('expenses.urls')),
     path('api/categories/', CategoryListCreateView.as_view(), name='category-list-create'),
+    path("api/categories/<int:pk>/",CategoryDetailView.as_view(),name="category-detail"),
     path('api/analytics/category-summary/',CategorySummaryView.as_view(),name='category-summary-view'),
     path('api/auth/signup/',SignUpView.as_view(),name='signup'),
     # path('api/auth/login/',LoginView.as_view(),name='login'),
