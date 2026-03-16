@@ -25,6 +25,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import {StaggerButton} from "../ui/stagger-button";
 
 export default function CreateSubscriptionDialog({onCreated}) {
   const [open, setOpen] = useState(false);
@@ -95,7 +96,7 @@ export default function CreateSubscriptionDialog({onCreated}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>+ Subscription</Button>
+        <StaggerButton>Create Subscription</StaggerButton>
       </DialogTrigger>
 
       <DialogContent className="bg-transparent backdrop-blur-md">

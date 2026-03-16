@@ -22,6 +22,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import {StaggerButton} from "../ui/stagger-button";
 
 export default function ExpenseForm({onCreated}) {
   const [title, setTitle] = useState("");
@@ -168,9 +169,9 @@ export default function ExpenseForm({onCreated}) {
             <Input value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full">
+          <StaggerButton type="submit" disabled={loading} className="w-full">
             {loading ? "Adding..." : "Add Expense"}
-          </Button>
+          </StaggerButton>
         </form>
       </CardContent>
     </Card>

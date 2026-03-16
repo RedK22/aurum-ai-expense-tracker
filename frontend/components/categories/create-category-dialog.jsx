@@ -16,6 +16,7 @@ import {Button} from "@/components/optics/button";
 import {Input} from "@/components/optics/input";
 import {Label} from "@/components/optics/label";
 import {apiRequest} from "@/lib/api";
+import {StaggerButton} from "../ui/stagger-button";
 
 export default function CreateCategoryDialog({onCreated}) {
   const [open, setOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function CreateCategoryDialog({onCreated}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>+ Category</Button>
+        <StaggerButton>Create Category</StaggerButton>
       </DialogTrigger>
 
       <DialogContent className="bg-transparent backdrop-blur-md">

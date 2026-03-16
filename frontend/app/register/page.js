@@ -14,6 +14,7 @@ import {
 import {Input} from "@/components/optics/input";
 import {Button} from "@/components/optics/button";
 import {Label} from "@/components/optics/label";
+import {StaggerButton} from "@/components/ui/stagger-button";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -96,9 +97,9 @@ export default function RegisterPage() {
             </div>
             {error && <div className="text-sm text-red-500">{error}</div>}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <StaggerButton type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating..." : "Sign Up"}
-            </Button>
+            </StaggerButton>
           </form>
         </CardContent>
         <p className="mt-4 text-center text-sm text-muted-foreground">
