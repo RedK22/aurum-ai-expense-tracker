@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-
 import {Calendar} from "@/components/ui/calendar";
 
 export default function ExpenseList() {
@@ -101,6 +100,22 @@ export default function ExpenseList() {
     return `${dateRange.from.toLocaleDateString()} → ${dateRange.to.toLocaleDateString()}`;
   }
 
+  /* ---------- LOCAL STATE UPDATES ---------- */
+
+  function handleDeletedExpense(id) {
+    setExpenses((prev) => prev.filter((exp) => exp.id !== id));
+  }
+
+  function handleUpdatedExpense(updatedExpense) {
+    setExpenses((prev) =>
+      prev.map((exp) => (exp.id === updatedExpense.id ? updatedExpense : exp)),
+    );
+  }
+
+  function handleCreatedExpense(newExpense) {
+    setExpenses((prev) => [newExpense, ...prev]);
+  }
+
   return (
     <div className="space-y-6">
       {/* Filters */}
@@ -170,7 +185,12 @@ export default function ExpenseList() {
       {!loading && !error && expenses.length > 0 && (
         <div className="space-y-4">
           {expenses.map((expense) => (
-            <ExpenseCard key={expense.id} expense={expense} />
+            <ExpenseCard
+              key={expense.id}
+              expense={expense}
+              onDeleted={handleDeletedExpense}
+              onUpdated={handleUpdatedExpense}
+            />
           ))}
         </div>
       )}
