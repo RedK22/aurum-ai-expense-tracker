@@ -1,8 +1,10 @@
 import json
 from openai import OpenAI
 from django.conf import settings
+import os 
 
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
+OPEN_AI_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=OPEN_AI_KEY)
 
 def parse_user_message(message,categories):
   prompt = f"""
