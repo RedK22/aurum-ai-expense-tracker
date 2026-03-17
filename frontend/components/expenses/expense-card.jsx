@@ -7,32 +7,40 @@ import DeleteExpenseDialog from "./delete-expense-dialog";
 
 export default function ExpenseCard({expense, onDeleted, onUpdated}) {
   return (
-    <Card className="bg-transparent backdrop-blur-md">
-      <CardContent className="flex justify-between items-start gap-6 py-4">
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold">{expense.title}</p>
+    <Card className="relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-md hover:shadow-lg hover:border-white/20 transition-all duration-300">
+      <CardContent className="p-4 flex items-center justify-between gap-4">
+        {/* Left: Title + Meta */}
+        <div className="flex flex-col min-w-0">
+          <p className="text-sm font-semibold truncate">{expense.title}</p>
 
-          <p className="text-sm text-muted-foreground">{expense.date}</p>
+          <div className="flex gap-3 text-xs text-muted-foreground mt-1">
+            <span>{expense.date}</span>
+            <span>•</span>
+            <span>{expense.category_name}</span>
+          </div>
 
           {expense.note && (
-            <p className="text-sm text-muted-foreground break-words whitespace-pre-wrap mt-1">
+            <p className="text-xs text-muted-foreground mt-1 truncate">
               {expense.note}
             </p>
           )}
         </div>
 
-        <div className="flex flex-col items-end gap-2">
-          <p className="text-lg font-semibold whitespace-nowrap">
+        {/* Right: Amount + Actions */}
+        <div className="flex items-center gap-4">
+          <p className="text-sm font-semibold whitespace-nowrap">
             ₹{expense.amount}
           </p>
 
           <div className="flex gap-2">
             <EditExpenseDialog expense={expense} onUpdated={onUpdated} />
-
             <DeleteExpenseDialog expenseId={expense.id} onDeleted={onDeleted} />
           </div>
         </div>
       </CardContent>
+
+      {/* subtle glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
     </Card>
   );
 }

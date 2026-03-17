@@ -123,7 +123,7 @@ export default function ExpenseList() {
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 items-center p-3 border border-white/10 bg-white/5 backdrop-blur-xl rounded-lg">
         <Input
           placeholder="Search expenses..."
           value={search}
@@ -131,7 +131,7 @@ export default function ExpenseList() {
             setSearch(e.target.value);
             setPage(1);
           }}
-          className="w-50"
+          className="w-55"
         />
 
         <Select
@@ -141,7 +141,7 @@ export default function ExpenseList() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-45">
+          <SelectTrigger className="w-50">
             <SelectValue placeholder="Category">
               {category === "all"
                 ? "All Categories"

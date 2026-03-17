@@ -63,7 +63,7 @@ export default function DeleteExpenseDialog({expenseId, onDeleted}) {
         </Button>
       </AlertDialogTrigger>
 
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this expense?</AlertDialogTitle>
         </AlertDialogHeader>

@@ -118,7 +118,7 @@ export default function ExpenseForm({
         <DialogTrigger asChild>
           <StaggerButton>{triggerLabel}</StaggerButton>
         </DialogTrigger>
-        <DialogContent className="bg-transparent backdrop-blur-md">
+        <DialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
           <DialogHeader>
             <DialogTitle>Add Expense</DialogTitle>
           </DialogHeader>
@@ -182,7 +182,7 @@ export default function ExpenseForm({
   }
   // Default: render as card (non-modal)
   return (
-    <Card className="bg-transparent backdrop-blur-md">
+    <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-md">
       {!hideHeader && (
         <CardHeader>
           <CardTitle>Add Expense</CardTitle>
