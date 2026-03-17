@@ -4,18 +4,20 @@ export default function ChatMessage({message}) {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`rounded-lg px-4 py-3 max-w-[80%] ${
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted"
+        className={`rounded-2xl px-4 py-3 max-w-[80%] shadow-md border ${
+          isUser
+            ? "bg-white/10 border-white/10 backdrop-blur-xl"
+            : "bg-white/5 border-white/10 backdrop-blur-xl"
         }`}
       >
         {/* Expense Created */}
         {message.expenseCreated && (
           <div className="space-y-2">
-            <div className="text-sm font-semibold text-green-500">
+            <div className="text-sm font-semibold text-green-400">
               ✅ Expense Created
             </div>
 
-            <div className="border rounded-md p-3 bg-background text-sm">
+            <div className="border border-white/10 rounded-lg p-3 bg-white/5 text-sm">
               <div className="font-medium">{message.expenseCreated.title}</div>
 
               <div className="text-lg font-semibold">
@@ -38,7 +40,7 @@ export default function ChatMessage({message}) {
             {message.expenses.map((e, i) => (
               <div
                 key={i}
-                className="border rounded-md p-3 bg-background text-sm"
+                className="border border-white/10 rounded-lg p-3 bg-white/5 text-sm"
               >
                 <div className="font-medium">
                   ₹{e.amount} — {e.title}
@@ -52,9 +54,9 @@ export default function ChatMessage({message}) {
           </div>
         )}
 
-        {/* Normal AI message */}
+        {/* Normal message */}
         {!message.expenseCreated && !message.expenses && (
-          <p className="text-sm">{message.content}</p>
+          <p className="text-sm leading-relaxed">{message.content}</p>
         )}
       </div>
     </div>

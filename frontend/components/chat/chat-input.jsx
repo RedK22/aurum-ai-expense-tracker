@@ -21,15 +21,21 @@ export default function ChatInput({onSend}) {
   };
 
   return (
-    <div className="flex gap-2 p-4 border-t">
+    <div className="flex gap-2 p-4 bg-white/5 backdrop-blur-xl">
       <Input
         placeholder="Ask about expenses..."
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleKeyDown}
+        className="bg-transparent border-white/10 focus:border-white/20"
       />
 
-      <Button onClick={handleSend}>Send</Button>
+      <Button
+        onClick={handleSend}
+        className="bg-white/10 hover:bg-white/20 border border-white/10"
+      >
+        Send
+      </Button>
     </div>
   );
 }

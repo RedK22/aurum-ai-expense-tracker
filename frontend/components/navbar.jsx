@@ -57,6 +57,9 @@ export default function Navbar() {
             <Link href="/subscriptions" className="hover:text-white transition">
               Subscriptions
             </Link>
+            <Link href="/chat" className="hover:text-white transition">
+              AI Chat
+            </Link>
           </div>
         )}
 
