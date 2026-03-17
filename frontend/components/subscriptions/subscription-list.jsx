@@ -45,19 +45,23 @@ export default function SubscriptionList() {
     );
   }
 
-  return (
+  return(
     <div className="space-y-4">
+      {/* Header actions */}
       <div className="flex justify-end">
         <CreateSubscriptionDialog onCreated={addSubscription} />
       </div>
 
-      {subscriptions.map((subscription) => (
-        <SubscriptionCard
-          key={subscription.id}
-          subscription={subscription}
-          onUpdated={updateSubscription}
-        />
-      ))}
-    </div>
+      {/* List */}
+      <div className="space-y-3">
+        {subscriptions.map((subscription) => (
+          <SubscriptionCard
+            key={subscription.id}
+            subscription={subscription}
+            onUpdated={updateSubscription}
+          />
+        ))}
+      </div>
+    </div>,
   );
 }

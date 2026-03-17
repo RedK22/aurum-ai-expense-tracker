@@ -94,7 +94,7 @@ export default function CreateSubscriptionDialog({onCreated}) {
         <StaggerButton>Create Subscription</StaggerButton>
       </DialogTrigger>
 
-      <DialogContent className="bg-transparent backdrop-blur-md">
+      <DialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
         <DialogHeader>
           <DialogTitle>Create Subscription</DialogTitle>
         </DialogHeader>
@@ -106,7 +106,7 @@ export default function CreateSubscriptionDialog({onCreated}) {
 
         <form
           onSubmit={handleCreate}
-          className="space-y-4"
+          className="space-y-5"
           aria-describedby="subscription-dialog-desc"
         >
           <div className="space-y-2">
@@ -166,7 +166,9 @@ export default function CreateSubscriptionDialog({onCreated}) {
             />
           </div>
 
-          <Button type="submit">Create</Button>
+          <Button type="submit" className="w-full">
+            Create
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

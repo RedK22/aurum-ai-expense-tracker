@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/optics/card";
 import {Input} from "@/components/optics/input";
-import {Button} from "@/components/optics/button";
 import {Label} from "@/components/optics/label";
 import {StaggerButton} from "@/components/ui/stagger-button";
 
@@ -40,14 +39,17 @@ export default function RegisterPage() {
           password,
         }),
       });
+
       toast({
         type: "success",
         title: "Registration successful",
         description: `Account created for ${username}. Please log in.`,
       });
+
       router.push("/login");
     } catch (err) {
       setError(err.message || "Registration failed");
+
       toast({
         type: "error",
         title: "Registration failed",
@@ -59,14 +61,19 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-100 bg-transparent backdrop-blur-md">
+    <div className="flex items-center justify-center min-h-[80vh]">
+      <Card className="w-full max-w-md border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl">
         <CardHeader>
-          <CardTitle>Create Account</CardTitle>
+          <CardTitle className="text-xl font-semibold">
+            Create Account
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Get started by creating a new account
+          </p>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label>Username</Label>
               <Input
@@ -95,22 +102,24 @@ export default function RegisterPage() {
                 required
               />
             </div>
+
             {error && <div className="text-sm text-red-500">{error}</div>}
 
             <StaggerButton type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating..." : "Sign Up"}
             </StaggerButton>
           </form>
+
+          <p className="mt-5 text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <span
+              className="text-primary cursor-pointer underline hover:opacity-80"
+              onClick={() => router.push("/login")}
+            >
+              Login here
+            </span>
+          </p>
         </CardContent>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <span
-            className="text-primary cursor-pointer underline hover:opacity-80"
-            onClick={() => router.push("/login")}
-          >
-            Login here
-          </span>
-        </p>
       </Card>
     </div>
   );
