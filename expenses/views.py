@@ -17,6 +17,8 @@ from django.db import transaction
 from expenses.ai.parser import parse_user_message
 from expenses.ai.router import execute_ai_command
 
+from config.throttles import AuthRateThrottle, AIRateThrottle
+
 #======================EXPENSE VIEWS===========================
 
 class ExpenseListCreateView(generics.ListCreateAPIView):
@@ -132,6 +134,7 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class SignUpView(APIView):
   permission_classes = []
+  throttle_classes = [AuthRateThrottle]
   def post(self,request):
     User = get_user_model()
     user = request.data.get('username').strip().lower()
@@ -196,6 +199,7 @@ class RecurringExpenseDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class AIQueryView(APIView):
   permission_classes=[IsAuthenticated]
+  throttle_classes = [AIRateThrottle]   
   def post(self,request):
     message=  request.data.get('message')
     categories = Category.objects.filter(is_active=True).values_list('name',flat=True)

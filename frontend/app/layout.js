@@ -6,6 +6,7 @@ import {TooltipProvider} from "@/components/ui/tooltip";
 import Navbar from "@/components/navbar";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/optics/sonner";
+import ClientSidebarWrapper from "@/components/ClientSidebarWrapper";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -35,15 +36,19 @@ export default function RootLayout({children}) {
             }}
           />
           {/* App Content */}
-          <div className="relative z-10">
+          <div className="relative z-10 flex h-screen">
             <ThemeProvider
               attribute="class"
               defaultTheme="dark"
               enableSystem={false}
             >
               <TooltipProvider>
-                <Navbar />
-                {children}
+                {/* Sidebar and main content are siblings in a flex row */}
+                <ClientSidebarWrapper />
+                <div className="flex-1 min-h-screen flex flex-col">
+                  <Navbar />
+                  <div className="flex-1 flex flex-col">{children}</div>
+                </div>
               </TooltipProvider>
             </ThemeProvider>
           </div>

@@ -176,7 +176,22 @@ REST_FRAMEWORK = {
 
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
-}
+
+    # ✅ ADD THIS
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "20/minute",
+        "user": "100/minute",
+
+        # custom scopes
+        "auth": "5/minute",
+        "ai": "10/minute",
+    },
+}   
 
 SIMPLE_JWT = {
 "ACCESS_TOKEN_LIFETIME":timedelta(hours=1),
