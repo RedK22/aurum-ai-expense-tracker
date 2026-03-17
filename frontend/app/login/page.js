@@ -39,14 +39,25 @@ export default function LoginPage() {
       });
       router.push("/dashboard");
     } catch (err) {
-      setError(err.message || "Login failed");
+      console.log("LOGIN ERROR:", err);
+
+      let message = "Login failed";
+
+      if (err?.status === 429) {
+        message = err.message || "Too many login attempts. Please wait.";
+      } else if (err?.status === 401) {
+        message = "Incorrect username or password.";
+      } else if (err?.message) {
+        message = err.message;
+      }
+
+      setError(message);
+
       toast({
         type: "error",
         title: "Login failed",
-        description: err.message || "Invalid credentials",
+        description: message,
       });
-    } finally {
-      setLoading(false);
     }
   }
 

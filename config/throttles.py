@@ -1,9 +1,9 @@
-from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 
 
-class AuthRateThrottle(ScopedRateThrottle):
+class AuthRateThrottle(UserRateThrottle):
     scope = "auth"
 
 
-class AIRateThrottle(ScopedRateThrottle):
+class AIRateThrottle(UserRateThrottle):
     scope = "ai"

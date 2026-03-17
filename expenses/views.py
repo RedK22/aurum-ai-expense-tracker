@@ -18,6 +18,7 @@ from expenses.ai.parser import parse_user_message
 from expenses.ai.router import execute_ai_command
 
 from config.throttles import AuthRateThrottle, AIRateThrottle
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 #======================EXPENSE VIEWS===========================
 
@@ -207,3 +208,7 @@ class AIQueryView(APIView):
     result = execute_ai_command(parsed,request.user)
 
     return Response(result)
+  
+# RATE LIMITING LOGIN
+class CustomTokenObtainPairView(TokenObtainPairView):
+    throttle_classes = [AuthRateThrottle]
