@@ -15,7 +15,7 @@ import {
 import {Button} from "@/components/optics/button";
 import {Input} from "@/components/optics/input";
 import {Label} from "@/components/optics/label";
-import {apiRequest} from "@/lib/api";
+import {apiRequest, invalidateCategories} from "@/lib/api";
 import {StaggerButton} from "../ui/stagger-button";
 
 export default function CreateCategoryDialog({onCreated}) {
@@ -44,6 +44,7 @@ export default function CreateCategoryDialog({onCreated}) {
       onCreated(created);
       setOpen(false);
       setName("");
+      invalidateCategories();
     } catch (err) {
       setError(err.message || "Failed to create category");
       toast({

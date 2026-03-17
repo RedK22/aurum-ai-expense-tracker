@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {apiRequest} from "@/lib/api";
+import {apiRequest, getCategories} from "@/lib/api";
 import {toast} from "@/components/optics/sonner";
 
 import {
@@ -52,20 +52,12 @@ export default function ExpenseForm({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  async function fetchCategories() {
-    try {
-      const data = await apiRequest("/categories/");
-
-      const categoryList = Array.isArray(data) ? data : data.results || [];
-
-      setCategories(categoryList);
-    } catch (err) {
-      setError("Failed to load categories");
+    async function load() {
+      const data = await getCategories();
+      setCategories(data);
     }
-  }
+    load();
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();

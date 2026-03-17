@@ -2,7 +2,7 @@
 
 import {useState, useEffect} from "react";
 
-import {apiRequest} from "@/lib/api";
+import {apiRequest, invalidateCategories} from "@/lib/api";
 import {toast} from "@/components/optics/sonner";
 
 import {
@@ -50,6 +50,7 @@ export default function DeleteCategoryDialog({category, onDeleted, disabled}) {
       }
 
       setOpen(false);
+      invalidateCategories();
     } catch (err) {
       setError(err.message || "Failed to delete category");
       toast({

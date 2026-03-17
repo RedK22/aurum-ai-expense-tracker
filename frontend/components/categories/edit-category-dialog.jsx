@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 
-import {apiRequest} from "@/lib/api";
+import {apiRequest, invalidateCategories} from "@/lib/api";
 import {toast} from "@/components/optics/sonner";
 
 import {
@@ -56,6 +56,7 @@ export default function EditCategoryDialog({category, onUpdated, disabled}) {
       }
 
       setOpen(false);
+      invalidateCategories();
     } catch (err) {
       setError(err.message || "Failed to update category");
       toast({

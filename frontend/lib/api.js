@@ -134,3 +134,19 @@ export function logout() {
     document.cookie = "access=; Max-Age=0; path=/;";
   }
 }
+
+// CATEGORY CACHE
+let cachedCategories = null;
+
+export async function getCategories() {
+  if (cachedCategories) return cachedCategories;
+
+  const data = await apiRequest("/categories/");
+  const categoryList = Array.isArray(data) ? data : data.results || [];
+
+  cachedCategories = categoryList;
+  return categoryList;
+}
+export function invalidateCategories() {
+  cachedCategories = null;
+}

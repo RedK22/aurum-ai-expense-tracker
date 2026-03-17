@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {apiRequest} from "@/lib/api";
+import {apiRequest, getCategories} from "@/lib/api";
 
 import ExpenseCard from "./expense-card";
 
@@ -44,18 +44,12 @@ export default function ExpenseList() {
   }, [search, category, dateRange, page]);
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  async function fetchCategories() {
-    try {
-      const data = await apiRequest("/categories/");
-      const categoryList = Array.isArray(data) ? data : data.results || [];
-      setCategories(categoryList);
-    } catch {
-      console.error("Failed to load categories");
+    async function load() {
+      const data = await getCategories();
+      setCategories(data);
     }
-  }
+    load();
+  }, []);
 
   async function fetchExpenses() {
     try {

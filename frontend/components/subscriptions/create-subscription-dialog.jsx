@@ -16,7 +16,7 @@ import {
 import {Button} from "@/components/optics/button";
 import {Input} from "@/components/optics/input";
 import {Label} from "@/components/optics/label";
-import {apiRequest} from "@/lib/api";
+import {apiRequest, getCategories} from "@/lib/api";
 
 import {
   Select,
@@ -40,7 +40,11 @@ export default function CreateSubscriptionDialog({onCreated}) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchCategories();
+    async function load() {
+      const data = await getCategories();
+      setCategories(data);
+    }
+    load();
   }, []);
 
   // Reset dropdowns on dialog open
@@ -50,15 +54,6 @@ export default function CreateSubscriptionDialog({onCreated}) {
       setFrequency("");
     }
   }, [open]);
-
-  async function fetchCategories() {
-    const data = await apiRequest("/categories/");
-    const list = Array.isArray(data) ? data : data.results || [];
-    // Filter for both GLOBAL and PRIVATE categories
-    setCategories(
-      list.filter((cat) => cat.scope === "GLOBAL" || cat.scope === "PRIVATE"),
-    );
-  }
 
   async function handleCreate(e) {
     e.preventDefault();

@@ -184,7 +184,7 @@ REST_FRAMEWORK = {
     ],
 
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "5/minute",
+        "anon": "15/minute",
         "user": "100/minute",
 
         # custom scopes

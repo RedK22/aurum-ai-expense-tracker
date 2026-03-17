@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {apiRequest} from "@/lib/api";
+import {apiRequest, getCategories} from "@/lib/api";
 
 import CategoryItem from "./category-item";
 import CreateCategoryDialog from "./create-category-dialog";
@@ -13,20 +13,12 @@ export default function CategoryList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  async function fetchCategories() {
-    try {
-      const data = await apiRequest("/categories/");
-      const list = Array.isArray(data) ? data : data.results || [];
-      setCategories(list);
-    } catch (err) {
-      console.error("Failed to fetch categories");
-    } finally {
-      setLoading(false);
+    async function load() {
+      const data = await getCategories();
+      setCategories(data);
     }
-  }
+    load();
+  }, []);
 
   /* ---------- LOCAL STATE UPDATES ---------- */
 

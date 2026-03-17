@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 
-import {apiRequest} from "@/lib/api";
+import {apiRequest, getCategories} from "@/lib/api";
 import {toast} from "@/components/optics/sonner";
 
 import {
@@ -40,18 +40,12 @@ export default function EditExpenseDialog({expense, onUpdated}) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  async function fetchCategories() {
-    try {
-      const data = await apiRequest("/categories/");
-      const categoryList = Array.isArray(data) ? data : data.results || [];
-      setCategories(categoryList);
-    } catch {
-      setError("Failed to load categories");
+    async function load() {
+      const data = await getCategories();
+      setCategories(data);
     }
-  }
+    load();
+  }, []);
 
   // Reset form values whenever dialog opens
   useEffect(() => {
