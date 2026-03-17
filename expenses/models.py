@@ -55,6 +55,9 @@ class Expense(models.Model):
   note=models.TextField(blank=True)
   user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='expenses')
 
+  class Meta:
+    ordering = ['-date','-id']  
+
   def __str__(self):
         return f"{self.title} - {self.amount}"
   

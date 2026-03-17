@@ -83,9 +83,9 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
             similarity=TrigramSimilarity('title',query)+TrigramSimilarity('note',query)
           ).filter(similarity__gt=0.2)
 
-          return queryset.order_by('-similarity')
+          return queryset.order_by('-similarity','-date','-id')
 
-        return queryset.order_by('-date')
+        return queryset.order_by('-date','-id')
 
 class SingleExpenseUpdateView(generics.RetrieveUpdateDestroyAPIView):
   permission_classes=[IsAuthenticated]
