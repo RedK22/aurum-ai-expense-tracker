@@ -71,7 +71,7 @@ export default function DeleteCategoryDialog({category, onDeleted, disabled}) {
         </Button>
       </AlertDialogTrigger>
 
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle>
             Delete category "{category.name}"?

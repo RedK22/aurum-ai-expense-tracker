@@ -61,7 +61,7 @@ export default function CreateCategoryDialog({onCreated}) {
         <StaggerButton>Create Category</StaggerButton>
       </DialogTrigger>
 
-      <DialogContent className="bg-transparent backdrop-blur-md">
+      <DialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
         <DialogHeader>
           <DialogTitle>Create Category</DialogTitle>
         </DialogHeader>
@@ -74,7 +74,9 @@ export default function CreateCategoryDialog({onCreated}) {
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
-          <Button type="submit">Create</Button>
+          <Button type="submit" className="w-full">
+            Create
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

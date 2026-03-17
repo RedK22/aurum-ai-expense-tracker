@@ -77,7 +77,7 @@ export default function EditCategoryDialog({category, onUpdated, disabled}) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="bg-transparent backdrop-blur-md">
+      <DialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>
         </DialogHeader>
