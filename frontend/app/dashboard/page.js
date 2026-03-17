@@ -10,14 +10,11 @@ import {Separator} from "@/components/ui/separator";
 
 import ChatContainer from "@/components/chat/chat-container";
 
-import {PieChart, Pie, Cell, Tooltip, ResponsiveContainer} from "recharts";
-
-const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#00C49F"];
-
 export default function DashboardPage() {
   const [summary, setSummary] = useState([]);
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
+  const [monthlyTotal, setMonthlyTotal] = useState(0);
 
   const [loading, setLoading] = useState(true);
 
@@ -27,11 +24,23 @@ export default function DashboardPage() {
 
   async function loadDashboard() {
     try {
-      const [summaryData, expensesData, subData] = await Promise.all([
-        apiRequest("/analytics/category-summary/"),
-        apiRequest("/expenses/"),
-        apiRequest("/recurring/"),
-      ]);
+      const today = new Date();
+
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+        .toISOString()
+        .split("T")[0];
+
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+        .toISOString()
+        .split("T")[0];
+
+      const [summaryData, expensesData, subData, monthlyData] =
+        await Promise.all([
+          apiRequest("/analytics/category-summary/"),
+          apiRequest("/expenses/"),
+          apiRequest("/recurring/"),
+          apiRequest(`/expenses/?from=${firstDay}&to=${lastDay}`),
+        ]);
 
       setSummary(summaryData);
 
@@ -42,8 +51,18 @@ export default function DashboardPage() {
       setRecentExpenses(expenseList.slice(0, 5));
 
       const subs = Array.isArray(subData) ? subData : subData.results || [];
-
       setSubscriptions(subs);
+
+      const monthlyList = Array.isArray(monthlyData)
+        ? monthlyData
+        : monthlyData.results || [];
+
+      const total = monthlyList.reduce(
+        (sum, item) => sum + Number(item.amount || 0),
+        0,
+      );
+
+      setMonthlyTotal(total);
     } finally {
       setLoading(false);
     }
@@ -54,116 +73,130 @@ export default function DashboardPage() {
     0,
   );
 
-  const pieData = summary.map((item) => ({
-    name: item.category__name,
-    value: Number(item.total),
-  }));
+  const activeSubscriptions = subscriptions.filter((s) => s.is_active).length;
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+    <div className="space-y-8">
+      {/* Header */}
+      <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle>Total Spent</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">
+              Monthly Spend
+            </CardTitle>
           </CardHeader>
 
           <CardContent>
             {loading ? (
               <Skeleton className="h-8 w-32" />
             ) : (
-              <p className="text-3xl font-semibold">₹{totalSpent}</p>
+              <p className="text-3xl font-semibold">₹{monthlyTotal}</p>
             )}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle>Active Subscriptions</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">
+              Active Subscriptions
+            </CardTitle>
           </CardHeader>
 
           <CardContent>
             {loading ? (
               <Skeleton className="h-8 w-20" />
             ) : (
-              <p className="text-3xl font-semibold">{subscriptions.length}</p>
+              <p className="text-3xl font-semibold">{activeSubscriptions}</p>
             )}
           </CardContent>
         </Card>
       </div>
 
-      <Separator />
+      <Separator className="opacity-30" />
 
-      {/* Middle section */}
+      {/* Middle */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Expenses */}
-        <Card>
+        <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle>Recent Expenses</CardTitle>
+            <CardTitle>Recent Transactions</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
             {loading &&
               Array.from({length: 5}).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
+                <Skeleton key={i} className="h-12 w-full rounded-lg" />
               ))}
 
             {!loading &&
               recentExpenses.map((e) => (
-                <div key={e.id} className="flex justify-between text-sm">
-                  <span>{e.title}</span>
-                  <span className="font-medium">₹{e.amount}</span>
+                <div
+                  key={e.id}
+                  className="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition"
+                >
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{e.title}</p>
+                    <p className="text-xs text-muted-foreground">{e.date}</p>
+                  </div>
+
+                  <p className="font-semibold whitespace-nowrap">₹{e.amount}</p>
                 </div>
               ))}
           </CardContent>
         </Card>
 
         {/* Chat */}
-        <Card className="flex flex-col h-[350px]">
+        <Card className="flex flex-col h-[400px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle>Quick Chat</CardTitle>
+            <CardTitle>Quick AI Chat</CardTitle>
           </CardHeader>
 
-          <CardContent className="flex flex-col flex-1 overflow-hidden gap-3">
-            <div className="flex-1 overflow-y-auto">
+          <CardContent className="flex flex-col flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto pr-1">
               <ChatContainer />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Separator />
+      <Separator className="opacity-30" />
 
-      {/* Charts */}
-      <Card>
+      {/* Category Breakdown */}
+      <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
         <CardHeader>
           <CardTitle>Spending by Category</CardTitle>
         </CardHeader>
 
-        <CardContent className="h-[300px]">
-          {loading ? (
-            <Skeleton className="h-full w-full" />
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  outerRadius={100}
-                  label
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
+        <CardContent className="space-y-4">
+          {loading &&
+            Array.from({length: 5}).map((_, i) => (
+              <Skeleton key={i} className="h-6 w-full rounded" />
+            ))}
 
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
+          {!loading &&
+            summary.map((item) => {
+              const percent =
+                totalSpent > 0 ? (Number(item.total) / totalSpent) * 100 : 0;
+
+              return (
+                <div key={item.category__name} className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span>{item.category__name}</span>
+                    <span>₹{item.total}</span>
+                  </div>
+
+                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-white/40 transition-all"
+                      style={{width: `${percent}%`}}
+                    />
+                  </div>
+                </div>
+              );
+            })}
         </CardContent>
       </Card>
     </div>
