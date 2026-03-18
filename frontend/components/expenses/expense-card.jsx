@@ -4,8 +4,11 @@ import {Card, CardContent} from "@/components/ui/card";
 
 import EditExpenseDialog from "./edit-expense-dialog";
 import DeleteExpenseDialog from "./delete-expense-dialog";
+import {formatCurrency} from "@/lib/currency";
+import {useCurrency} from "@/components/currency-context";
 
 export default function ExpenseCard({expense, onDeleted, onUpdated}) {
+  const {currency} = useCurrency();
   return (
     <Card className="relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-md hover:shadow-lg hover:border-white/20 transition-all duration-300">
       <CardContent className="p-4 flex items-center justify-between gap-4">
@@ -29,7 +32,7 @@ export default function ExpenseCard({expense, onDeleted, onUpdated}) {
         {/* Right: Amount + Actions */}
         <div className="flex items-center gap-4">
           <p className="text-sm font-semibold whitespace-nowrap">
-            ₹{expense.amount}
+            {formatCurrency(expense.amount, currency)}
           </p>
 
           <div className="flex gap-2">

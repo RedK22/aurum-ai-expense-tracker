@@ -7,8 +7,11 @@ import {toast} from "@/components/optics/sonner";
 
 import {Card, CardContent} from "@/components/ui/card";
 import {Switch} from "@/components/ui/switch";
+import {formatCurrency} from "@/lib/currency";
+import {useCurrency} from "@/components/currency-context";
 
 export default function SubscriptionCard({subscription, onUpdated}) {
+  const {currency} = useCurrency();
   const [active, setActive] = useState(subscription.is_active);
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +57,7 @@ export default function SubscriptionCard({subscription, onUpdated}) {
           <p className="text-sm font-semibold truncate">{subscription.title}</p>
 
           <div className="flex gap-3 text-xs text-muted-foreground mt-1">
-            <span>₹{subscription.amount}</span>
+            <span>{formatCurrency(subscription.amount, currency)}</span>
             <span>•</span>
             <span>{subscription.frequency.toLowerCase()}</span>
           </div>

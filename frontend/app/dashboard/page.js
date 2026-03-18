@@ -9,8 +9,11 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Separator} from "@/components/ui/separator";
 
 import ChatContainer from "@/components/chat/chat-container";
+import {formatCurrency} from "@/lib/currency";
+import {useCurrency} from "@/components/currency-context";
 
 export default function DashboardPage() {
+  const {currency} = useCurrency();
   const [summary, setSummary] = useState([]);
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
@@ -93,7 +96,9 @@ export default function DashboardPage() {
             {loading ? (
               <Skeleton className="h-8 w-32" />
             ) : (
-              <p className="text-3xl font-semibold">₹{monthlyTotal}</p>
+              <p className="text-3xl font-semibold">
+                {formatCurrency(monthlyTotal, currency)}
+              </p>
             )}
           </CardContent>
         </Card>
@@ -142,7 +147,9 @@ export default function DashboardPage() {
                     <p className="text-xs text-muted-foreground">{e.date}</p>
                   </div>
 
-                  <p className="font-semibold whitespace-nowrap">₹{e.amount}</p>
+                  <p className="font-semibold whitespace-nowrap">
+                    {formatCurrency(e.amount, currency)}
+                  </p>
                 </div>
               ))}
           </CardContent>
@@ -185,7 +192,7 @@ export default function DashboardPage() {
                 <div key={item.category__name} className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span>{item.category__name}</span>
-                    <span>₹{item.total}</span>
+                    <span>{formatCurrency(item.total, currency)}</span>
                   </div>
 
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">

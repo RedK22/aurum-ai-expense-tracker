@@ -17,10 +17,20 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
+import {useCurrency} from "@/components/currency-context";
+
+// ✅ Icons
+import {IndianRupeeIcon} from "./ui/indian-rupee";
+import {DollarSignIcon} from "./ui/dollar-sign";
+import {PoundSterlingIcon} from "./ui/pound-sterling";
+import {EuroIcon} from "./ui/euro";
+
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const {theme, changeTheme} = useTheme();
+
+  const {currency, setCurrency} = useCurrency();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [open, setOpen] = useState(false);
@@ -40,12 +50,26 @@ export default function Navbar() {
     router.push(path);
   }
 
+  function handleCurrencyChange(cur) {
+    setCurrency(cur);
+  }
+
+  const currencies = [
+    {code: "INR", symbol: "₹", icon: IndianRupeeIcon},
+    {code: "USD", symbol: "$", icon: DollarSignIcon},
+    {code: "EUR", symbol: "€", icon: EuroIcon},
+    {code: "GBP", symbol: "£", icon: PoundSterlingIcon},
+  ];
+
+  const currentCurrency = currencies.find((c) => c.code === currency.code);
+
+  const CurrentIcon = currentCurrency?.icon;
+
   return (
     <>
       {/* NAVBAR */}
       <div className="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-14 px-6">
-          
           {/* Logo */}
           <div
             className="font-semibold text-lg cursor-pointer tracking-tight hover:opacity-80 transition"
@@ -63,12 +87,15 @@ export default function Navbar() {
               <Link href="/expenses" className="hover:text-white transition">
                 Expenses
               </Link>
-              <Link href="/subscriptions" className="hover:text-white transition">
+              <Link
+                href="/subscriptions"
+                className="hover:text-white transition"
+              >
                 Subscriptions
               </Link>
-<Link href="/categories" className="hover:text-white transition">
-  Categories
-</Link>
+              <Link href="/categories" className="hover:text-white transition">
+                Categories
+              </Link>
               <Link href="/chat" className="hover:text-white transition">
                 AI Chat
               </Link>
@@ -77,8 +104,48 @@ export default function Navbar() {
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
-            
-            {/* Theme Dropdown (always visible) */}
+            {/* ✅ Currency Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <div className="flex items-center gap-2">
+                    {CurrentIcon && <CurrentIcon className="w-4 h-4" />}
+                    {currency.symbol} {currency.code}
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                {currencies.map((cur) => {
+                  const Icon = cur.icon;
+
+                  return (
+                    <DropdownMenuItem
+                      key={cur.code}
+                      onClick={() => handleCurrencyChange(cur)}
+                      className={`flex items-center justify-between gap-2 group ${
+                        currency.code === cur.code
+                          ? "text-white font-medium"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {Icon && (
+                          <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                        )}
+                        {cur.symbol} {cur.code}
+                      </div>
+
+                      {currency.code === cur.code && (
+                        <span className="ml-2 text-xs opacity-70">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Theme Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -163,10 +230,10 @@ export default function Navbar() {
           <div className="flex flex-col gap-4 text-sm">
             <button onClick={() => navigate("/dashboard")}>Dashboard</button>
             <button onClick={() => navigate("/expenses")}>Expenses</button>
-            <button onClick={() => navigate("/subscriptions")}>Subscriptions</button>
-<button onClick={() => navigate("/categories")}>
-  Categories
-</button>
+            <button onClick={() => navigate("/subscriptions")}>
+              Subscriptions
+            </button>
+            <button onClick={() => navigate("/categories")}>Categories</button>
             <button onClick={() => navigate("/chat")}>AI Chat</button>
           </div>
 

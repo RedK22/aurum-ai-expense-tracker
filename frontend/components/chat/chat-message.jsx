@@ -1,4 +1,8 @@
+import {formatCurrency} from "@/lib/currency";
+import {useCurrency} from "@/components/currency-context";
+
 export default function ChatMessage({message}) {
+  const {currency} = useCurrency();
   const isUser = message.role === "user";
 
   return (
@@ -21,7 +25,7 @@ export default function ChatMessage({message}) {
               <div className="font-medium">{message.expenseCreated.title}</div>
 
               <div className="text-lg font-semibold">
-                ₹{message.expenseCreated.amount}
+                {formatCurrency(message.expenseCreated.amount, currency)}
               </div>
 
               <div className="text-xs text-muted-foreground">
@@ -43,7 +47,7 @@ export default function ChatMessage({message}) {
                 className="border border-white/10 rounded-lg p-3 bg-white/5 text-sm"
               >
                 <div className="font-medium">
-                  ₹{e.amount} — {e.title}
+                  {formatCurrency(e.amount, currency)} — {e.title}
                 </div>
 
                 <div className="text-xs text-muted-foreground">
