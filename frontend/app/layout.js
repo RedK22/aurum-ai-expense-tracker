@@ -10,6 +10,10 @@ import {ThemeProviderCustom} from "@/components/theme-context";
 import SmoothScroll from "@/components/smooth-scroll";
 import {CurrencyProvider} from "@/components/currency-context";
 
+import {tryAutoLogin} from "@/lib/api";
+import {useEffect} from "react";
+import AuthInit from "@/lib/AuthInit";
+
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -27,6 +31,7 @@ export default function RootLayout({children}) {
         <CurrencyProvider>
           <SmoothScroll />
           <ThemeProviderCustom>
+            <AuthInit />
             <div className="relative min-h-screen w-full overflow-hidden">
               {/* BACKGROUND (behind everything) */}
               <BackgroundLayer />

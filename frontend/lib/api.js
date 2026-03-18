@@ -1,13 +1,13 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 // ==============================
-// 🔐 REFRESH CONTROL (IMPORTANT)
+// 🔐 REFRESH CONTROL
 // ==============================
 let isRefreshing = false;
 let refreshPromise = null;
 
 /*
-Refresh access token using refresh token
+Refresh access token
 */
 async function refreshAccessToken() {
   if (isRefreshing && refreshPromise) {
@@ -31,14 +31,14 @@ async function refreshAccessToken() {
     body: JSON.stringify({refresh}),
   })
     .then(async (res) => {
-      if (!res.ok) {
-        throw new Error("Failed to refresh token.");
-      }
+      if (!res.ok) throw new Error("Refresh failed");
 
       const data = await res.json();
 
       if (typeof window !== "undefined") {
         localStorage.setItem("access", data.access);
+
+        // 🔥 keep middleware working
         document.cookie = `access=${data.access}; path=/; SameSite=Lax`;
       }
 
@@ -53,7 +53,36 @@ async function refreshAccessToken() {
 }
 
 /*
-Main API request function
+🔥 AUTO LOGIN ON APP LOAD
+Call this ONCE in layout / app init
+*/
+export async function tryAutoLogin() {
+  if (typeof window === "undefined") return;
+
+  const access = localStorage.getItem("access");
+  const refresh = localStorage.getItem("refresh");
+
+  // nothing stored → do nothing
+  if (!refresh) return;
+
+  // if access exists → assume ok
+  if (access) {
+    document.cookie = `access=${access}; path=/; SameSite=Lax`;
+    return;
+  }
+
+  // 🔥 try refreshing silently
+  try {
+    const newAccess = await refreshAccessToken();
+
+    document.cookie = `access=${newAccess}; path=/; SameSite=Lax`;
+  } catch (err) {
+    logout();
+  }
+}
+
+/*
+Main API request
 */
 export async function apiRequest(endpoint, options = {}) {
   let token =
@@ -73,7 +102,7 @@ export async function apiRequest(endpoint, options = {}) {
     headers,
   });
 
-  // 🔥 If access token expired → try refresh
+  // 🔥 ACCESS EXPIRED → REFRESH
   if (res.status === 401) {
     try {
       token = await refreshAccessToken();
@@ -85,13 +114,10 @@ export async function apiRequest(endpoint, options = {}) {
         headers,
       });
     } catch (err) {
-      // ❌ Refresh failed → logout user
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("access");
-        localStorage.removeItem("refresh");
-        document.cookie = "access=; Max-Age=0; path=/;";
+      // ❌ refresh also failed → logout
+      logout();
 
-        // 🔥 redirect to login
+      if (typeof window !== "undefined") {
         window.location.href = "/login";
       }
 
@@ -118,7 +144,7 @@ export async function apiRequest(endpoint, options = {}) {
 }
 
 /*
-Login function
+Login
 */
 export async function login(username, password) {
   const res = await fetch(`${API_BASE}/token/`, {
@@ -139,7 +165,6 @@ export async function login(username, password) {
     localStorage.setItem("access", data.access);
     localStorage.setItem("refresh", data.refresh);
 
-    // cookie for middleware
     document.cookie = `access=${data.access}; path=/; SameSite=Lax`;
   }
 
@@ -147,7 +172,7 @@ export async function login(username, password) {
 }
 
 /*
-Logout helper 
+Logout
 */
 export function logout() {
   if (typeof window !== "undefined") {
