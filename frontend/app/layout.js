@@ -7,6 +7,7 @@ import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/optics/sonner";
 import BackgroundLayer from "@/components/BackgroundLayer";
 import {ThemeProviderCustom} from "@/components/theme-context";
+import SmoothScroll from "@/components/smooth-scroll";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -22,6 +23,7 @@ export default function RootLayout({children}) {
   return (
     <html lang="en" className="dark">
       <body className={`${roboto.className} antialiased`}>
+        <SmoothScroll />
         <ThemeProviderCustom>
           <div className="relative min-h-screen w-full overflow-hidden">
             {/* BACKGROUND (behind everything) */}
