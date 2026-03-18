@@ -63,28 +63,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="px-6 pb-24 max-w-5xl mx-auto">
-        <h2 className="text-2xl font-semibold text-center mb-10">
-          How it works
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-6 text-center">
-          {[
-            "Type your expense",
-            "AI understands it",
-            "Everything is organized instantly",
-          ].map((step, i) => (
-            <div
-              key={i}
-              className="p-5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl"
-            >
-              <p className="text-lg font-medium">{step}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* PREVIEW (simple for now) */}
       <section className="px-6 pb-24">
         <div className="max-w-4xl mx-auto p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl">
