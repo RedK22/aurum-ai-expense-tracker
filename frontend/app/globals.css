@@ -131,3 +131,13 @@
 button {
   @apply cursor-pointer;
 }
+
+::selection {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgb(206, 108, 255);
+}
+
+::-moz-selection {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgb(206, 108, 255);
+}
