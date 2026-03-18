@@ -14,9 +14,15 @@ export default function ChatContainer() {
   ]);
 
   const bottomRef = useRef(null);
+  const hasMounted = useRef(false); // 🔥 prevent initial scroll
 
-  // 🔥 Auto scroll to bottom
+  // ✅ Auto scroll (skip first render)
   useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
     bottomRef.current?.scrollIntoView({behavior: "smooth"});
   }, [messages]);
 
@@ -78,7 +84,7 @@ export default function ChatContainer() {
           <ChatMessage key={i} message={msg} />
         ))}
 
-        {/* 👇 Invisible anchor for scroll */}
+        {/* 👇 scroll anchor */}
         <div ref={bottomRef} />
       </div>
 
