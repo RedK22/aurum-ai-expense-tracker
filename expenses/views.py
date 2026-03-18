@@ -212,3 +212,11 @@ class AIQueryView(APIView):
 # RATE LIMITING LOGIN
 class CustomTokenObtainPairView(TokenObtainPairView):
     throttle_classes = [AuthRateThrottle]
+
+
+ #health
+
+from django.http import JsonResponse
+
+def health(request):
+    return JsonResponse({"status": "ok"})
