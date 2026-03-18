@@ -95,7 +95,11 @@ export default function LoginPage() {
 
             {error && <div className="text-sm text-red-500">{error}</div>}
 
-            <StaggerButton type="submit" className="w-full" disabled={loading}>
+            <StaggerButton
+              type="submit"
+              className="bg-white/10 w-full border border-white/30 backdrop-blue-xl text-white"
+              disabled={loading}
+            >
               {loading ? "Logging in..." : "Login"}
             </StaggerButton>
           </form>

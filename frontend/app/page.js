@@ -1,69 +1,82 @@
 "use client";
 
 import {useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
 import {StaggerButton} from "@/components/ui/stagger-button";
+import SpotlightCards from "@/components/kokonutui/spotlight-cards";
+import {ActivityIcon} from "@/components/ui/activity";
+import {BotMessageSquareIcon} from "@/components/ui/bot-message-square";
+import {SquarePenIcon} from "@/components/ui/square-pen";
+SquarePenIcon;
 
 export default function Home() {
   const router = useRouter();
+
+  const features = [
+    {
+      icon: BotMessageSquareIcon,
+      title: "AI Chat",
+      description: "Add and manage expenses using natural language.",
+      color: "#a78bfa",
+    },
+    {
+      icon: ActivityIcon,
+      title: "Smart Tracking",
+      description: "Filter and organize expenses effortlessly.",
+      color: "#38bdf8",
+    },
+    {
+      icon: SquarePenIcon,
+      title: "Subscriptions",
+      description: "Manage your recurring expenses easily.",
+      color: "#34d399",
+    },
+    // {
+    //   title: "Analytics",
+    //   description: "Understand where your money goes.",
+    //   color: "#f59e0b",
+    // },
+  ];
 
   return (
     <div className="flex flex-col text-white">
       {/* HERO */}
       <section className="flex flex-col items-center justify-center text-center py-32 px-6">
-        <h1 className="text-4xl  md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
           AI-Powered Expense Tracking
         </h1>
 
         <p className="mt-6 text-muted-foreground max-w-xl text-lg">
-          A smarter way to track expenses - with AI assistance, clean insights,
+          A smarter way to track expenses — with AI assistance, clean insights,
           and zero clutter.
         </p>
 
         <div className="flex gap-4 mt-8">
-          <StaggerButton onClick={() => router.push("/register")}>
+          <StaggerButton
+            className="bg-white/10 border border-white/30 backdrop-blue-xl text-white"
+            onClick={() => router.push("/register")}
+          >
             Get Started
           </StaggerButton>
 
-          <StaggerButton className="" onClick={() => router.push("/login")}>
+          <StaggerButton
+            className="bg-white/10 border border-white/30 backdrop-blue-xl text-white"
+            onClick={() => router.push("/login")}
+          >
             Login
           </StaggerButton>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section className="px-6 pb-24 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-6">
-          {[
-            {
-              title: "AI Chat",
-              desc: "Add and manage expenses using natural language",
-            },
-            {
-              title: "Smart Tracking",
-              desc: "Filter and organize expenses effortlessly",
-            },
-            {
-              title: "Subscriptions",
-              desc: "Manage your recurring expenses easily",
-            },
-            {
-              title: "Analytics",
-              desc: "Understand where your money goes",
-            },
-          ].map((f, i) => (
-            <div
-              key={i}
-              className="p-5 rounded-xl border border-white/10 hover:-translate-y-2 bg-white/5 backdrop-blur-xl shadow-lg hover:shadow-xl transition"
-            >
-              <h3 className="font-semibold text-lg">{f.title}</h3>
-              <p className="text-sm text-muted-foreground mt-2">{f.desc}</p>
-            </div>
-          ))}
-        </div>
+      {/* FEATURES (FIXED) */}
+      <section className="px-6 pb-24 max-w-6xl mx-auto w-full">
+        <SpotlightCards
+          eyebrow="Features"
+          heading="Everything you need"
+          items={features}
+        />
       </section>
 
-      {/* PREVIEW (simple for now) */}
+      {/* PREVIEW */}
       <section className="px-6 pb-24">
         <div className="max-w-4xl mx-auto p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl">
           <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
@@ -120,7 +133,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FINAL CTA */}
+      {/* CTA */}
       <section className="text-center pb-24 px-6">
         <h2 className="text-3xl font-semibold">Start tracking smarter today</h2>
 
@@ -129,7 +142,7 @@ export default function Home() {
         </p>
 
         <StaggerButton
-          className="mt-6"
+          className="bg-white/10 border border-white/30 backdrop-blue-xl text-white mt-6"
           onClick={() => router.push("/register")}
         >
           Create Account

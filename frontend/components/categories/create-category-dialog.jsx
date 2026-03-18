@@ -58,7 +58,9 @@ export default function CreateCategoryDialog({onCreated}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <StaggerButton>Create Category</StaggerButton>
+        <StaggerButton className="bg-white/10 border border-white/30 backdrop-blue-xl text-white">
+          Create Category
+        </StaggerButton>
       </DialogTrigger>
 
       <DialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">

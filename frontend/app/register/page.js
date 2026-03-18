@@ -105,7 +105,11 @@ export default function RegisterPage() {
 
             {error && <div className="text-sm text-red-500">{error}</div>}
 
-            <StaggerButton type="submit" className="w-full" disabled={loading}>
+            <StaggerButton
+              type="submit"
+              className="bg-white/10 border w-full border-white/30 backdrop-blue-xl text-white"
+              disabled={loading}
+            >
               {loading ? "Creating..." : "Sign Up"}
             </StaggerButton>
           </form>

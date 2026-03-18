@@ -116,7 +116,9 @@ export default function ExpenseForm({
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <StaggerButton>{triggerLabel}</StaggerButton>
+          <StaggerButton className="bg-white/10 border border-white/30 backdrop-blue-xl text-white">
+            {triggerLabel}
+          </StaggerButton>
         </DialogTrigger>
         <DialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
           <DialogHeader>
@@ -172,7 +174,11 @@ export default function ExpenseForm({
               <Label>Note</Label>
               <Input value={note} onChange={(e) => setNote(e.target.value)} />
             </div>
-            <StaggerButton type="submit" disabled={loading} className="w-full">
+            <StaggerButton
+              className="bg-white/10 border w-full border-white/30 backdrop-blue-xl text-white"
+              type="submit"
+              disabled={loading}
+            >
               {loading ? "Adding..." : buttonLabel}
             </StaggerButton>
           </form>
@@ -236,7 +242,11 @@ export default function ExpenseForm({
             <Label>Note</Label>
             <Input value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
-          <StaggerButton type="submit" disabled={loading} className="w-full">
+          <StaggerButton
+            type="submit"
+            disabled={loading}
+            className="bg-white/10 border border-white/30 backdrop-blue-xl text-white w-full"
+          >
             {loading ? "Adding..." : buttonLabel}
           </StaggerButton>
         </form>

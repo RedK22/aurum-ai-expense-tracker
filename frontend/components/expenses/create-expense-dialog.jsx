@@ -18,7 +18,9 @@ export default function CreateExpenseDialog({onCreated}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <StaggerButton>Create Expense</StaggerButton>
+        <StaggerButton className="bg-white/10 border border-white/30 backdrop-blue-xl text-white">
+          Create Expense
+        </StaggerButton>
       </DialogTrigger>
       <DialogContent className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
         <DialogHeader>
