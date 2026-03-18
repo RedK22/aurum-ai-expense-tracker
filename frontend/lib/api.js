@@ -1,10 +1,19 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
-// || "http://127.0.0.1:8000/api";
+
+// ==============================
+// 🔐 REFRESH CONTROL (IMPORTANT)
+// ==============================
+let isRefreshing = false;
+let refreshPromise = null;
 
 /*
 Refresh access token using refresh token
 */
 async function refreshAccessToken() {
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise;
+  }
+
   const refresh =
     typeof window !== "undefined" ? localStorage.getItem("refresh") : null;
 
@@ -12,26 +21,35 @@ async function refreshAccessToken() {
     throw new Error("No refresh token available.");
   }
 
-  const res = await fetch(`${API_BASE}/token/refresh/`, {
+  isRefreshing = true;
+
+  refreshPromise = fetch(`${API_BASE}/token/refresh/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({refresh}),
-  });
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        throw new Error("Failed to refresh token.");
+      }
 
-  if (!res.ok) {
-    throw new Error("Failed to refresh token.");
-  }
+      const data = await res.json();
 
-  const data = await res.json();
+      if (typeof window !== "undefined") {
+        localStorage.setItem("access", data.access);
+        document.cookie = `access=${data.access}; path=/; SameSite=Lax`;
+      }
 
-  if (typeof window !== "undefined") {
-    localStorage.setItem("access", data.access);
-    document.cookie = `access=${data.access}; path=/;`;
-  }
+      return data.access;
+    })
+    .finally(() => {
+      isRefreshing = false;
+      refreshPromise = null;
+    });
 
-  return data.access;
+  return refreshPromise;
 }
 
 /*
@@ -55,7 +73,7 @@ export async function apiRequest(endpoint, options = {}) {
     headers,
   });
 
-  // If access token expired → try refresh
+  // 🔥 If access token expired → try refresh
   if (res.status === 401) {
     try {
       token = await refreshAccessToken();
@@ -67,14 +85,17 @@ export async function apiRequest(endpoint, options = {}) {
         headers,
       });
     } catch (err) {
-      // Refresh failed → logout user
+      // ❌ Refresh failed → logout user
       if (typeof window !== "undefined") {
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         document.cookie = "access=; Max-Age=0; path=/;";
+
+        // 🔥 redirect to login
+        window.location.href = "/login";
       }
 
-      throw new Error("Session expired. Please login again.");
+      throw new Error("Session expired.");
     }
   }
 
@@ -119,7 +140,7 @@ export async function login(username, password) {
     localStorage.setItem("refresh", data.refresh);
 
     // cookie for middleware
-    document.cookie = `access=${data.access}; path=/;`;
+    document.cookie = `access=${data.access}; path=/; SameSite=Lax`;
   }
 
   return data;
@@ -136,7 +157,9 @@ export function logout() {
   }
 }
 
-// CATEGORY CACHE
+// ==============================
+// 📂 CATEGORY CACHE
+// ==============================
 let cachedCategories = null;
 
 export async function getCategories() {
@@ -148,6 +171,7 @@ export async function getCategories() {
   cachedCategories = categoryList;
   return categoryList;
 }
+
 export function invalidateCategories() {
   cachedCategories = null;
 }
