@@ -7,8 +7,6 @@ import {ActivityIcon} from "@/components/ui/activity";
 import {BotMessageSquareIcon} from "@/components/ui/bot-message-square";
 import {SquarePenIcon} from "@/components/ui/square-pen";
 
-SquarePenIcon;
-
 export default function Home() {
   const router = useRouter();
 
