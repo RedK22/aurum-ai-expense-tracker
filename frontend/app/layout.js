@@ -10,8 +10,6 @@ import {ThemeProviderCustom} from "@/components/theme-context";
 import SmoothScroll from "@/components/smooth-scroll";
 import {CurrencyProvider} from "@/components/currency-context";
 
-import {tryAutoLogin} from "@/lib/api";
-import {useEffect} from "react";
 import AuthInit from "@/lib/AuthInit";
 
 const roboto = Roboto({
