@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView,CategoryDetailView,CustomTokenObtainPairView
-from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView, health
 
 urlpatterns = [
+    path("api/health/", health),
     path('admin/', admin.site.urls),
     path('api/expenses/', include('expenses.urls')),
     path('api/categories/', CategoryListCreateView.as_view(), name='category-list-create'),
