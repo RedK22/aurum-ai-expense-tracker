@@ -20,7 +20,7 @@ import {
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Calendar} from "@/components/ui/calendar";
 
-export default function ExpenseList() {
+export default function ExpenseList({externalNewExpense}) { // 🔥 new prop
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
 
@@ -50,6 +50,13 @@ export default function ExpenseList() {
     }
     load();
   }, []);
+
+  // 🔥 NEW: handle created expense from parent
+  useEffect(() => {
+    if (externalNewExpense) {
+      setExpenses((prev) => [externalNewExpense, ...prev]);
+    }
+  }, [externalNewExpense]);
 
   async function fetchExpenses() {
     try {
@@ -114,10 +121,6 @@ export default function ExpenseList() {
     setExpenses((prev) =>
       prev.map((exp) => (exp.id === updatedExpense.id ? updatedExpense : exp)),
     );
-  }
-
-  function handleCreatedExpense(newExpense) {
-    setExpenses((prev) => [newExpense, ...prev]);
   }
 
   return (
