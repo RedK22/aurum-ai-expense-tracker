@@ -66,6 +66,9 @@ export default function Navbar() {
               <Link href="/subscriptions" className="hover:text-white transition">
                 Subscriptions
               </Link>
+<Link href="/categories" className="hover:text-white transition">
+  Categories
+</Link>
               <Link href="/chat" className="hover:text-white transition">
                 AI Chat
               </Link>
@@ -161,6 +164,9 @@ export default function Navbar() {
             <button onClick={() => navigate("/dashboard")}>Dashboard</button>
             <button onClick={() => navigate("/expenses")}>Expenses</button>
             <button onClick={() => navigate("/subscriptions")}>Subscriptions</button>
+<button onClick={() => navigate("/categories")}>
+  Categories
+</button>
             <button onClick={() => navigate("/chat")}>AI Chat</button>
           </div>
 
