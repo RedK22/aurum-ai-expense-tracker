@@ -15,7 +15,7 @@ urlpatterns = [
     # path('api/auth/logout/',LogoutView.as_view(),name='logout'),
     path('api/recurring/',RecurringExpenseListCreateView.as_view()),
     path('api/recurring/<int:pk>/',RecurringExpenseDetailView.as_view()),
-    path('api/ai/query',AIQueryView.as_view()),
+    path('api/ai/query/',AIQueryView.as_view()),
 
 
     path("api/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
