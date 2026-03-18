@@ -6,6 +6,7 @@ import SpotlightCards from "@/components/kokonutui/spotlight-cards";
 import {ActivityIcon} from "@/components/ui/activity";
 import {BotMessageSquareIcon} from "@/components/ui/bot-message-square";
 import {SquarePenIcon} from "@/components/ui/square-pen";
+import {LightBoard} from "@/components/ui/lightboard";
 SquarePenIcon;
 
 export default function Home() {
