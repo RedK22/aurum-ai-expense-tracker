@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
-from expenses.views import CategoryListCreateView,CategorySummaryView,SignUpView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView,CategoryDetailView,CustomTokenObtainPairView
-from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView, health
+from expenses.views import health, CategoryListCreateView,CategorySummaryView,SignUpView,RecurringExpenseListCreateView,RecurringExpenseDetailView,AIQueryView,CategoryDetailView,CustomTokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 
 urlpatterns = [
     path("api/health/", health),
