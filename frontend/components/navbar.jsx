@@ -59,6 +59,7 @@ export default function Navbar() {
     {code: "USD", symbol: "$", icon: DollarSignIcon},
     {code: "EUR", symbol: "€", icon: EuroIcon},
     {code: "GBP", symbol: "£", icon: PoundSterlingIcon},
+    {code: "PLN", symbol: "zł"},
   ];
 
   const currentCurrency = currencies.find((c) => c.code === currency.code);
