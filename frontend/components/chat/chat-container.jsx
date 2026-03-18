@@ -23,7 +23,7 @@ export default function ChatContainer() {
 
     try {
       const token = localStorage.getItem("access");
-      const BASE_URL = process.env.NEXT_PUBLIC_API_KEY;
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${BASE_URL}/ai/query/`, {
         method: "POST",
         headers: {
