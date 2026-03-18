@@ -213,6 +213,9 @@ class AIQueryView(APIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     throttle_classes = [AuthRateThrottle]
 
+    def post(self, request, *args, **kwargs):
+        request.data["username"] = request.data.get("username", "").strip().lower()
+        return super().post(request, *args, **kwargs)
 
  #health
 
