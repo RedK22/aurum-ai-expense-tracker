@@ -45,7 +45,7 @@ export default function Home() {
             },
             {
               title: "Subscriptions",
-              desc: "Automate recurring expenses seamlessly",
+              desc: "Manage your recurring expenses easily",
             },
             {
               title: "Analytics",
@@ -128,9 +128,12 @@ export default function Home() {
           No setup. No complexity. Just results.
         </p>
 
-        <Button className="mt-6" onClick={() => router.push("/register")}>
+        <StaggerButton
+          className="mt-6"
+          onClick={() => router.push("/register")}
+        >
           Create Account
-        </Button>
+        </StaggerButton>
       </section>
     </div>
   );
