@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect, useRef} from "react";
 import ChatMessage from "./chat-message";
 import ChatInput from "./chat-input";
 
@@ -13,6 +13,13 @@ export default function ChatContainer() {
     },
   ]);
 
+  const bottomRef = useRef(null);
+
+  // 🔥 Auto scroll to bottom
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({behavior: "smooth"});
+  }, [messages]);
+
   const sendMessage = async (text) => {
     const userMessage = {
       role: "user",
@@ -24,6 +31,7 @@ export default function ChatContainer() {
     try {
       const token = localStorage.getItem("access");
       const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
       const res = await fetch(`${BASE_URL}/ai/query/`, {
         method: "POST",
         headers: {
@@ -69,6 +77,9 @@ export default function ChatContainer() {
         {messages.map((msg, i) => (
           <ChatMessage key={i} message={msg} />
         ))}
+
+        {/* 👇 Invisible anchor for scroll */}
+        <div ref={bottomRef} />
       </div>
 
       {/* Input */}
