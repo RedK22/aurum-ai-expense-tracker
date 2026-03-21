@@ -7,8 +7,15 @@ import {ActivityIcon} from "@/components/ui/activity";
 import {BotMessageSquareIcon} from "@/components/ui/bot-message-square";
 import {SquarePenIcon} from "@/components/ui/square-pen";
 
+import {Skiper16} from "@/components/ui/skiper-ui/skiper16";
+import ss1 from "@/public/images/landing/ss1.png";
+import ss2 from "@/public/images/landing/ss2.png";
+import ss3 from "@/public/images/landing/ss3.png";
+import ss4 from "@/public/images/landing/ss4.png";
+
 export default function Home() {
   const router = useRouter();
+  const skiperImages = [ss1, ss2, ss3, ss4];
 
   const features = [
     {
@@ -29,11 +36,6 @@ export default function Home() {
       description: "Manage your recurring expenses easily.",
       color: "#34d399",
     },
-    // {
-    //   title: "Analytics",
-    //   description: "Understand where your money goes.",
-    //   color: "#f59e0b",
-    // },
   ];
 
   return (
@@ -43,12 +45,10 @@ export default function Home() {
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
           AI-Powered Expense Tracking
         </h1>
-
         <p className="mt-6 text-muted-foreground max-w-xl text-lg">
           A smarter way to track expenses — with AI assistance, clean insights,
           and zero clutter.
         </p>
-
         <div className="flex gap-4 mt-8">
           <StaggerButton
             className="bg-white/10 border border-white/30 backdrop-blue-xl text-white"
@@ -56,7 +56,6 @@ export default function Home() {
           >
             Get Started
           </StaggerButton>
-
           <StaggerButton
             className="bg-white/10 border border-white/30 backdrop-blue-xl text-white"
             onClick={() => router.push("/login")}
@@ -66,7 +65,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURES (FIXED) */}
+      {/* FEATURES */}
       <section className="px-6 pb-24 max-w-6xl mx-auto w-full">
         <SpotlightCards
           eyebrow="Features"
@@ -75,71 +74,26 @@ export default function Home() {
         />
       </section>
 
-      {/* PREVIEW */}
-      <section className="px-6 pb-24">
-        <div className="max-w-4xl mx-auto p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl">
-          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span>Swiggy</span>
-              <span>₹250</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Netflix Subscription</span>
-              <span>₹649</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Uber</span>
-              <span>₹180</span>
-            </div>
-          </div>
+      {/* APP SHOWCASE */}
+      <section className="px-6 pb-16 max-w-4xl mx-auto w-full">
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-extrabold tracking-tight mb-2">
+            Experience the App in Motion
+          </h2>
+          <p className="text-lg text-muted-foreground">
+            Scroll down to explore real app screens in a smooth, interactive
+            stack.
+          </p>
         </div>
-      </section>
-
-      {/* AI DEMO */}
-      <section className="px-6 pb-24 max-w-3xl mx-auto">
-        <h2 className="text-2xl font-semibold text-center mb-10">
-          Talk to your expenses
-        </h2>
-
-        <div className="space-y-4 text-sm">
-          <div className="flex justify-end">
-            <div className="bg-primary text-primary-foreground px-4 py-2 rounded-lg">
-              Spent 250 on food
-            </div>
-          </div>
-
-          <div className="flex justify-start">
-            <div className="bg-white/10 px-4 py-2 rounded-lg backdrop-blur-xl border border-white/10">
-              ✅ Expense added
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <div className="bg-primary text-primary-foreground px-4 py-2 rounded-lg">
-              Show my food expenses
-            </div>
-          </div>
-
-          <div className="flex justify-start">
-            <div className="bg-white/10 px-4 py-2 rounded-lg backdrop-blur-xl border border-white/10">
-              🍔 ₹250 — Food (Today)
-            </div>
-          </div>
-        </div>
+        <Skiper16 images={skiperImages} />
       </section>
 
       {/* CTA */}
       <section className="text-center pb-24 px-6">
         <h2 className="text-3xl font-semibold">Start tracking smarter today</h2>
-
         <p className="text-muted-foreground mt-4">
           No setup. No complexity. Just results.
         </p>
-
         <StaggerButton
           className="bg-white/10 border border-white/30 backdrop-blue-xl text-white mt-6"
           onClick={() => router.push("/register")}
