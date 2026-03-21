@@ -71,6 +71,7 @@ export default function Home() {
           eyebrow="Features"
           heading="Everything you need"
           items={features}
+          className="[&_.grid]:grid-cols-1 sm:[&_.grid]:grid-cols-2 md:[&_.grid]:grid-cols-3"
         />
       </section>
 
@@ -85,7 +86,25 @@ export default function Home() {
             stack.
           </p>
         </div>
-        <Skiper16 images={skiperImages} />
+        {/* Desktop: Skiper16, hidden on mobile */}
+        <div className="hidden md:block">
+          <Skiper16 images={skiperImages} />
+        </div>
+        {/* Mobile: Carousel */}
+        <div className="block md:hidden w-full">
+          <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-2">
+            {skiperImages.map((img, i) => (
+              <div key={i} className="min-w-0 flex-shrink-0 w-72 snap-center rounded-2xl overflow-hidden border border-white/10 bg-white/5 shadow-lg">
+                <img
+                  src={img.src || img}
+                  alt={`Screenshot ${i + 1}`}
+                   className="w-full h-56 object-contain bg-black"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* CTA */}

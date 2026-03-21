@@ -100,9 +100,13 @@ export default function CreateSubscriptionDialog({onCreated}) {
         <DialogHeader>
           <DialogTitle>Create Subscription</DialogTitle>
         </DialogHeader>
+
         <DialogDescription id="subscription-dialog-desc">
           Fill in the details to create a new recurring subscription.
         </DialogDescription>
+        <div className="rounded-md bg-yellow-100/80 border border-yellow-400 text-yellow-900 px-4 py-2 text-sm mb-2">
+          <strong>Warning:</strong> Creating a subscription will automatically create expenses for you. Please ensure your details are correct before proceeding.
+        </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
