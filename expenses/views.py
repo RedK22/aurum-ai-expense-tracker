@@ -113,16 +113,24 @@ class CategoryListCreateView(generics.ListCreateAPIView):
 
 class CategorySummaryView(APIView):
   permission_classes=[IsAuthenticated]
+
   def get(self,request):
-    queryset=Expense.objects.filter(user=request.user)
-    category_id = self.request.query_params.get('category')
+    queryset = Expense.objects.filter(user=request.user)
+
+    category_id = request.query_params.get('category')
     if category_id:
       queryset = queryset.filter(category_id=category_id)
-    queryset=queryset.values('category__name').annotate(total=Sum('amount'),count=Count('id'))  
-    
 
-    return Response(queryset)
-  
+    from_date = request.query_params.get("from")
+    if from_date:
+      queryset = queryset.filter(date__gte=from_date)
+
+    queryset = queryset.values('category__name').annotate(
+      total=Sum('amount'),
+      count=Count('id')
+    )
+
+    return Response(queryset)  
 
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
   serializer_class=CategorySerializer
