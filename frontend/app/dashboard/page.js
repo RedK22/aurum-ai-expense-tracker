@@ -29,23 +29,29 @@ export default function DashboardPage() {
     try {
       const today = new Date();
 
-      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
-        .toISOString()
-        .split("T")[0];
+      // ✅ FIX: use local date instead of toISOString
+      const firstDay = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        1
+      ).toLocaleDateString("en-CA");
 
-      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-        .toISOString()
-        .split("T")[0];
-
-      const [summaryData, expensesData, subData, monthlyData] =
+      const [summaryData, expensesData, subData] =
         await Promise.all([
-          apiRequest("/analytics/category-summary/"),
+          // ✅ FIX: pass from param
+          apiRequest(`/analytics/category-summary/?from=${firstDay}`),
           apiRequest("/expenses/"),
           apiRequest("/recurring/"),
-          apiRequest(`/expenses/?from=${firstDay}&to=${lastDay}`),
         ]);
 
       setSummary(summaryData);
+
+      // ✅ FIX: derive monthly total from summary (same as AI)
+      const total = summaryData.reduce(
+        (sum, item) => sum + Number(item.total || 0),
+        0
+      );
+      setMonthlyTotal(total);
 
       const expenseList = Array.isArray(expensesData)
         ? expensesData
@@ -56,16 +62,6 @@ export default function DashboardPage() {
       const subs = Array.isArray(subData) ? subData : subData.results || [];
       setSubscriptions(subs);
 
-      const monthlyList = Array.isArray(monthlyData)
-        ? monthlyData
-        : monthlyData.results || [];
-
-      const total = monthlyList.reduce(
-        (sum, item) => sum + Number(item.amount || 0),
-        0,
-      );
-
-      setMonthlyTotal(total);
     } finally {
       setLoading(false);
     }
@@ -73,17 +69,15 @@ export default function DashboardPage() {
 
   const totalSpent = summary.reduce(
     (sum, item) => sum + Number(item.total || 0),
-    0,
+    0
   );
 
   const activeSubscriptions = subscriptions.filter((s) => s.is_active).length;
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
 
-      {/* Stats */}
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
           <CardHeader>
@@ -122,9 +116,7 @@ export default function DashboardPage() {
 
       <Separator className="opacity-30" />
 
-      {/* Middle */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Expenses */}
         <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
@@ -155,7 +147,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Chat */}
         <Card className="flex flex-col h-[400px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
           <CardHeader>
             <CardTitle>Quick AI Chat</CardTitle>
@@ -171,7 +162,6 @@ export default function DashboardPage() {
 
       <Separator className="opacity-30" />
 
-      {/* Category Breakdown */}
       <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
         <CardHeader>
           <CardTitle>Spending by Category</CardTitle>
