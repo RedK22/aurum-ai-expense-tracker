@@ -94,12 +94,15 @@ export default function Home() {
         <div className="block md:hidden w-full">
           <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-2">
             {skiperImages.map((img, i) => (
-              <div key={i} className="min-w-0 flex-shrink-0 w-72 snap-center rounded-2xl overflow-hidden border border-white/10 bg-white/5 shadow-lg">
+              <div
+                key={i}
+                className="min-w-0 flex-shrink-0 w-72 snap-center rounded-2xl overflow-hidden border border-white/10 bg-white/5 shadow-lg"
+              >
                 <img
                   src={img.src || img}
                   alt={`Screenshot ${i + 1}`}
-                   className="w-full h-56 object-contain bg-black"
-                  loading={i === 0 ? 'eager' : 'lazy'}
+                  className="w-full h-56 object-contain bg-black"
+                  loading={i === 0 ? "eager" : "lazy"}
                 />
               </div>
             ))}
