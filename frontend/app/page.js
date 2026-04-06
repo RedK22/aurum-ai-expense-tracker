@@ -43,11 +43,10 @@ export default function Home() {
       {/* HERO */}
       <section className="flex flex-col items-center justify-center text-center py-32 px-6">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
-          AI-Powered Expense Tracking
+          Aurum
         </h1>
         <p className="mt-6 text-muted-foreground max-w-xl text-lg">
-          A smarter way to track expenses — with AI assistance, clean insights,
-          and zero clutter.
+          Track expenses the way you think.
         </p>
         <div className="flex gap-4 mt-8">
           <StaggerButton

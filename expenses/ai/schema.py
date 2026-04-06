@@ -1,3 +1,6 @@
-ALLOWED_ACTIONS=[
-  'create_expense','list_expense','analytics','unknown'
+ALLOWED_ACTIONS = [
+    'create_expense',
+    'list_expenses',  
+    'analytics',
+    'unknown'
 ]

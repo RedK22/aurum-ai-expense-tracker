@@ -1,9 +1,45 @@
 from expenses.models import Expense, Category
 from django.utils import timezone
-from datetime import timedelta
 from django.db.models import Sum
 import re
 
+from dateutil.relativedelta import relativedelta
+from datetime import date, timedelta
+
+
+# ======================
+# DATE RESOLVER (NEW)
+# ======================
+
+def resolve_date_range(date_from, date_to):
+    today = date.today()
+
+    start = None
+    end = None
+
+    if date_from == "today":
+        start = today
+
+    elif date_from == "yesterday":
+        start = today - timedelta(days=1)
+
+    elif date_from == "last_month":
+        start = (today.replace(day=1) - relativedelta(months=1))
+        end = today.replace(day=1) - timedelta(days=1)
+
+    elif date_from and "months_ago" in str(date_from):
+        n = int(date_from.split("_")[0])
+        start = today - relativedelta(months=n)
+
+    if date_to == "today":
+        end = today
+
+    return start, end
+
+
+# ======================
+# (OLD FUNCTION - UNUSED BUT KEPT SAFE)
+# ======================
 
 def parse_period_to_start_date(period, today):
     start_date = None
@@ -42,12 +78,16 @@ def parse_period_to_start_date(period, today):
     return start_date
 
 
+# ======================
+# MAIN EXECUTOR
+# ======================
+
 def execute_ai_command(command, user):
 
     action = command.get("action")
 
     # ======================
-    # CREATE EXPENSE
+    # CREATE EXPENSE (UNCHANGED)
     # ======================
 
     if action == "create_expense":
@@ -78,85 +118,133 @@ def execute_ai_command(command, user):
         return {
             "message": f"Expense created for {amount}",
             "amount": amount,
-            "expense":{
+            "expense": {
                 "title": expense.title,
                 "amount": float(expense.amount),
                 "category": expense.category.name,
                 "date": expense.date
-    }
+            }
         }
 
     # ======================
-    # ANALYTICS
+    # ANALYTICS (FIXED + UPGRADED)
     # ======================
 
     if action == "analytics":
 
-        today = timezone.now().date()
-        period = command.get("period")
-
-        start_date = parse_period_to_start_date(period, today)
-
+        filters = command.get("filters", {})
         queryset = Expense.objects.filter(user=user)
 
-        if start_date:
-            queryset = queryset.filter(date__gte=start_date)
+        # CATEGORY
+        if filters.get("category"):
+            queryset = queryset.filter(
+                category__name__iexact=filters["category"]
+            )
 
-        category_name = command.get("category")
+        # TITLE
+        if filters.get("title"):
+            queryset = queryset.filter(
+                title__icontains=filters["title"]
+            )
 
-        if category_name:
-            category = Category.objects.filter(name__iexact=category_name).first()
+        # DATE RANGE
+        start, end = resolve_date_range(
+            filters.get("date_from"),
+            filters.get("date_to")
+        )
 
-            if category:
-                queryset = queryset.filter(category=category)
+        if start:
+            queryset = queryset.filter(date__gte=start)
 
-        total = queryset.aggregate(total=Sum("amount"))["total"] or 0
+        if end:
+            queryset = queryset.filter(date__lte=end)
 
-        if period == "today":
-            message = f"You spent {total} today"
+        # ======================
+        # GROUP BY CATEGORY (FIXED OUTPUT)
+        # ======================
 
-        elif period == "week":
-            message = f"You spent {total} this week"
+        if command.get("group_by") == "category":
 
-        elif period == "month":
-            message = f"You spent {total} this month"
+            results = queryset.values("category__name").annotate(
+                total=Sum("amount")
+            )
 
-        elif period == "year":
-            message = f"You spent {total} this year"
+            if command.get("sort") == "desc":
+                results = results.order_by("-total")
 
-        elif period:
-            message = f"You spent {total} in the last {period}"
+            if command.get("limit"):
+                results = results[:command["limit"]]
 
-        else:
-            message = f"You spent {total} in total"
+            data = list(results)
 
-        return {"message": message}
+            if not data:
+                return {"message": "No expenses found."}
+
+            # 🔥 FORMAT OUTPUT
+            lines = []
+            for i, item in enumerate(data, start=1):
+                lines.append(f"{i}. {item['category__name']} — ₹{item['total']}")
+
+            return {
+                "message": "Top categories:\n" + "\n".join(lines),
+                "data": data
+            }
 
     # ======================
-    # LIST EXPENSES
+    # DEFAULT SUM (OPTIONAL IMPROVEMENT)
+    # ======================
+
+    total = queryset.aggregate(total=Sum("amount"))["total"] or 0
+
+    # optional: nicer message
+    category = filters.get("category")
+    title = filters.get("title")
+
+    if category:
+        return {"message": f"You spent ₹{total} on {category}"}
+
+    if title:
+        return {"message": f"You spent ₹{total} on {title}"}
+
+    return {"message": f"You spent ₹{total}"}
+
+    # ======================
+    # LIST EXPENSES (FIXED)
     # ======================
 
     if action == "list_expenses":
 
-        today = timezone.now().date()
-        period = command.get("period")
-
-        start_date = parse_period_to_start_date(period, today)
-
+        filters = command.get("filters", {})
         queryset = Expense.objects.filter(user=user)
 
-        if start_date:
-            queryset = queryset.filter(date__gte=start_date)
+        # CATEGORY
+        if filters.get("category"):
+            queryset = queryset.filter(
+                category__name__iexact=filters["category"]
+            )
 
-        category_name = command.get("category")
+        # TITLE
+        if filters.get("title"):
+            queryset = queryset.filter(
+                title__icontains=filters["title"]
+            )
 
-        if category_name:
-            category = Category.objects.filter(name__iexact=category_name).first()
+        # DATE RANGE
+        start, end = resolve_date_range(
+            filters.get("date_from"),
+            filters.get("date_to")
+        )
 
-            if category:
-                queryset = queryset.filter(category=category)
+        if start:
+            queryset = queryset.filter(date__gte=start)
 
-        expenses = queryset.order_by("-date")[:10]
+        if end:
+            queryset = queryset.filter(date__lte=end)
+
+        expenses = queryset.order_by("-date")
+
+        if command.get("limit"):
+            expenses = expenses[:command["limit"]]
 
         results = []
 
@@ -176,8 +264,8 @@ def execute_ai_command(command, user):
     # ======================
     # UNKNOWN
     # ======================
-    elif action == "unknown":
 
+    if action == "unknown":
         return {
             "message": "I didn't understand. Try adding an expense or asking about spending."
         }

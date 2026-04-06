@@ -1,135 +1,160 @@
 import json
 from openai import OpenAI
-from django.conf import settings
 import os 
 
 OPEN_AI_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPEN_AI_KEY)
 
-def parse_user_message(message,categories):
-  prompt = f"""
-  You are an assistant that converts natural language into structured expense data.
 
-  Your job is to extract information from the user message and return ONLY valid JSON.
+def parse_user_message(message, categories):
 
-  Rules:
-  - Extract the numeric amount as a number.
-  - The amount MUST be a number (no currency symbols).
-  - If the user says "spent 350", the amount is 350.
-  - Always detect the amount if present.
-  - If no amount is found, return amount as null.
+    prompt = f"""
+You are an assistant that converts natural language into structured expense commands.
 
-  Allowed actions:
-  create_expense
-  list_expenses
-  analytics
-  unknown
+Return ONLY valid JSON.
 
-  Return JSON with this exact structure:
+Allowed actions:
+create_expense
+list_expenses
+analytics
+unknown
 
-  {{
-  "action": "create_expense",
-  "title": "short description of the expense(1-3 words only)",
-  "amount": number or null,
+NEW JSON STRUCTURE:
+
+{{
+  "action": "...",
+  "filters": {{
+    "category": "string or null",
+    "title": "string or null",
+    "date_from": "today | yesterday | last_month | N_months_ago | null",
+    "date_to": "today | null"
+  }},
+  "aggregation": "sum | none",
+  "group_by": "category | none",
+  "limit": number or null,
+  "sort": "desc | asc | null",
+
+  // ONLY for create_expense:
+  "title": "short title",
+  "amount": number,
   "category": "category name",
   "date": "today | yesterday | YYYY-MM-DD",
-  "note": "extra content and details about the expense"
-  }}
+  "note": "extra note"
+}}
 
-  Available categories:
-  {", ".join(categories)}
+Available categories:
+{", ".join(categories)}
 
-  Examples:
+-------------------------
+EXAMPLES
+-------------------------
 
-  User: spent 350 on pizza yesterday
-  Output:
-  {{
+User: spent 350 on pizza yesterday
+{{
   "action":"create_expense",
   "title":"Pizza",
   "amount":350,
   "category":"Food",
   "date":"yesterday",
   "note":""
-  }}
+}}
 
-  User: paid 120 for coffee
-  Output:
-  {{
-  "action":"create_expense",
-  "title":"Coffee",
-  "amount":120,
-  "category":"Food",
-  "date":"today",
-  "note":""
-  }}
-
-  User: paid 400 for coffee with friends at Starbucks
-  Output:
-  {{
-  "action":"create_expense",
-  "title":"Coffee",
-  "amount":400,
-  "category":"Food",
-  "date":"today",
-  "note":"with friends at Starbucks"
-  }}
-
-  User: how much did I spend on food this month
-  Output:
-  {{
+User: how much did I spend on food last 3 months
+{{
   "action":"analytics",
-  "category":"Food",
-  "period":"month"
-  }}
+  "filters": {{
+    "category":"Food",
+    "title":null,
+    "date_from":"3_months_ago",
+    "date_to":"today"
+  }},
+  "aggregation":"sum",
+  "group_by":"none",
+  "limit":null,
+  "sort":null
+}}
 
-  User: show my spending this month
-  Output:
-  {{
+User: how much did I spend on pizza last month
+{{
   "action":"analytics",
-  "category":null,
-  "period":"month"
-  }}
+  "filters": {{
+    "category":null,
+    "title":"Pizza",
+    "date_from":"last_month",
+    "date_to":"today"
+  }},
+  "aggregation":"sum",
+  "group_by":"none",
+  "limit":null,
+  "sort":null
+}}
 
-  
-  User: show expenses this week
-  Output:
-  {{
+User: what category have I spent on most
+{{
+  "action":"analytics",
+  "filters": {{
+    "category":null,
+    "title":null,
+    "date_from":null,
+    "date_to":null
+  }},
+  "aggregation":"sum",
+  "group_by":"category",
+  "limit":1,
+  "sort":"desc"
+}}
+
+User: top 3 spent categories
+{{
+  "action":"analytics",
+  "filters": {{
+    "category":null,
+    "title":null,
+    "date_from":null,
+    "date_to":null
+  }},
+  "aggregation":"sum",
+  "group_by":"category",
+  "limit":3,
+  "sort":"desc"
+}}
+
+User: list expenses of food for last 2 months
+{{
   "action":"list_expenses",
-  "category":null,
-  "period":"week"
-  }}
+  "filters": {{
+    "category":"Food",
+    "title":null,
+    "date_from":"2_months_ago",
+    "date_to":"today"
+  }},
+  "aggregation":"none",
+  "group_by":"none",
+  "limit":10,
+  "sort":"desc"
+}}
 
-  
-  User: show my food expenses this month
-  Output:
-  {{
-  "action":"list_expenses",
-  "category":"Food",
-  "period":"month"
-  }}
+-------------------------
 
+Now extract from:
 
+User message:
+{message}
+"""
 
-  Now extract data from this message:
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[
+            {"role": "system", "content": "You are an expense tracking assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    )
 
-  User message:
-  {message}
-  """
+    content = response.choices[0].message.content
 
-  response = client.chat.completions.create(
-    model='gpt-4o-mini',
-    messages=[{
-      'role':'system',
-      'content':'You are an expense tracking assistant.'
-    },{
-      'role':'user','content':prompt
-    }
-    ]
-  )
+    print("AI RESPONSE:", content)
 
-  content = response.choices[0].message.content
-
-  print("AI RESPONSE")
-  print(content)
-
-  return json.loads(content)
+    try:
+        return json.loads(content)
+    except:
+        return {"action": "unknown"}

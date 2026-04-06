@@ -76,7 +76,7 @@ export default function Navbar() {
             className="font-semibold text-lg cursor-pointer tracking-tight hover:opacity-80 transition"
             onClick={() => navigate("/dashboard")}
           >
-            Expense AI
+            Aurum
           </div>
 
           {/* Desktop Navigation */}
