@@ -136,24 +136,24 @@ User: list expenses of food for last 2 months
 
 
 User: asdfghjkl
-{
+{{
   "action": "unknown"
-}
+}}
 
 User: hello there
-{
+{{
   "action": "unknown"
-}
+}}
 
 User: what is the capital of France?
-{
+{{
   "action": "unknown"
-}
+}}
 
 User: 12345
-{
+{{
   "action": "unknown"
-}
+}}
 -------------------------
 
 Now extract from:
@@ -164,6 +164,7 @@ User message:
 
     response = client.chat.completions.create(
         model='gpt-4o-mini',
+        response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": "You are an expense tracking assistant."},
             {"role": "user", "content": prompt}
