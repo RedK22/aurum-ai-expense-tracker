@@ -55,7 +55,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col text-white">
+    <div className="flex flex-col text-white overflow-x-hidden md:overflow-x-visible">
 
       {/* ── HERO ── */}
       <section className="relative flex flex-col items-center justify-center text-center pt-28 pb-32 px-6">
@@ -150,9 +150,8 @@ export default function Home() {
           <Skiper16 images={skiperImages} />
         </div>
 
-        {/* Mobile: auto-advancing carousel with label + dots */}
+        {/* Mobile */}
         <div className="block md:hidden w-full">
-          {/* Slide */}
           <div className="relative w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl">
             <div
               className="flex transition-transform duration-500 ease-in-out"
