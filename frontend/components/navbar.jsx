@@ -63,7 +63,6 @@ export default function Navbar() {
   ];
 
   const currentCurrency = currencies.find((c) => c.code === currency.code);
-
   const CurrentIcon = currentCurrency?.icon;
 
   return (
@@ -88,10 +87,7 @@ export default function Navbar() {
               <Link href="/expenses" className="hover:text-white transition">
                 Expenses
               </Link>
-              <Link
-                href="/subscriptions"
-                className="hover:text-white transition"
-              >
+              <Link href="/subscriptions" className="hover:text-white transition">
                 Subscriptions
               </Link>
               <Link href="/categories" className="hover:text-white transition">
@@ -105,46 +101,49 @@ export default function Navbar() {
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
-            {/* ✅ Currency Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <div className="flex items-center gap-2">
-                    {CurrentIcon && <CurrentIcon className="w-4 h-4" />}
-                    {currency.symbol} {currency.code}
-                  </div>
-                </Button>
-              </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end">
-                {currencies.map((cur) => {
-                  const Icon = cur.icon;
+            {/* ✅ Currency Dropdown (ONLY when logged in) */}
+            {isLoggedIn && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <div className="flex items-center gap-2">
+                      {CurrentIcon && <CurrentIcon className="w-4 h-4" />}
+                      {currency.symbol} {currency.code}
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
 
-                  return (
-                    <DropdownMenuItem
-                      key={cur.code}
-                      onClick={() => handleCurrencyChange(cur)}
-                      className={`flex items-center justify-between gap-2 group ${
-                        currency.code === cur.code
-                          ? "text-white font-medium"
-                          : ""
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        {Icon && (
-                          <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                <DropdownMenuContent align="end">
+                  {currencies.map((cur) => {
+                    const Icon = cur.icon;
+
+                    return (
+                      <DropdownMenuItem
+                        key={cur.code}
+                        onClick={() => handleCurrencyChange(cur)}
+                        className={`flex items-center justify-between gap-2 group ${
+                          currency.code === cur.code
+                            ? "text-white font-medium"
+                            : ""
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {Icon && (
+                            <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                          )}
+                          {cur.symbol} {cur.code}
+                        </div>
+
+                        {currency.code === cur.code && (
+                          <span className="ml-2 text-xs opacity-70">✓</span>
                         )}
-                        {cur.symbol} {cur.code}
-                      </div>
-
-                      {currency.code === cur.code && (
-                        <span className="ml-2 text-xs opacity-70">✓</span>
-                      )}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
             {/* Theme Dropdown */}
             <DropdownMenu>
