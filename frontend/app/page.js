@@ -55,10 +55,10 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col text-white overflow-x-hidden">
+    <div className="flex flex-col text-white">
 
       {/* ── HERO ── */}
-      <section className="relative flex flex-col items-center justify-center text-center pt-28 pb-32 px-6 overflow-hidden">
+      <section className="relative flex flex-col items-center justify-center text-center pt-28 pb-32 px-6">
 
         {/* Ambient background blobs */}
         <div className="pointer-events-none absolute inset-0 -z-10">
