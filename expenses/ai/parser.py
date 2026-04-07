@@ -134,6 +134,26 @@ User: list expenses of food for last 2 months
   "sort":"desc"
 }}
 
+
+User: asdfghjkl
+{
+  "action": "unknown"
+}
+
+User: hello there
+{
+  "action": "unknown"
+}
+
+User: what is the capital of France?
+{
+  "action": "unknown"
+}
+
+User: 12345
+{
+  "action": "unknown"
+}
 -------------------------
 
 Now extract from:
