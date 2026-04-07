@@ -8,7 +8,7 @@ from datetime import date, timedelta
 
 
 # ======================
-# DATE RESOLVER (NEW)
+# DATE RESOLVER
 # ======================
 
 def resolve_date_range(date_from, date_to):
@@ -87,7 +87,7 @@ def execute_ai_command(command, user):
     action = command.get("action")
 
     # ======================
-    # CREATE EXPENSE (UNCHANGED)
+    # CREATE EXPENSE
     # ======================
 
     if action == "create_expense":
@@ -127,7 +127,7 @@ def execute_ai_command(command, user):
         }
 
     # ======================
-    # ANALYTICS (FIXED + UPGRADED)
+    # ANALYTICS
     # ======================
 
     if action == "analytics":
@@ -159,10 +159,7 @@ def execute_ai_command(command, user):
         if end:
             queryset = queryset.filter(date__lte=end)
 
-        # ======================
-        # GROUP BY CATEGORY (FIXED OUTPUT)
-        # ======================
-
+        # GROUP BY CATEGORY
         if command.get("group_by") == "category":
 
             results = queryset.values("category__name").annotate(
@@ -180,7 +177,6 @@ def execute_ai_command(command, user):
             if not data:
                 return {"message": "No expenses found."}
 
-            # 🔥 FORMAT OUTPUT
             lines = []
             for i, item in enumerate(data, start=1):
                 lines.append(f"{i}. {item['category__name']} — ₹{item['total']}")
@@ -190,26 +186,22 @@ def execute_ai_command(command, user):
                 "data": data
             }
 
-    # ======================
-    # DEFAULT SUM (OPTIONAL IMPROVEMENT)
-    # ======================
+        # DEFAULT SUM — still inside analytics block
+        total = queryset.aggregate(total=Sum("amount"))["total"] or 0
 
-    total = queryset.aggregate(total=Sum("amount"))["total"] or 0
+        category = filters.get("category")
+        title = filters.get("title")
 
-    # optional: nicer message
-    category = filters.get("category")
-    title = filters.get("title")
+        if category:
+            return {"message": f"You spent ₹{total} on {category}"}
 
-    if category:
-        return {"message": f"You spent ₹{total} on {category}"}
+        if title:
+            return {"message": f"You spent ₹{total} on {title}"}
 
-    if title:
-        return {"message": f"You spent ₹{total} on {title}"}
-
-    return {"message": f"You spent ₹{total}"}
+        return {"message": f"You spent ₹{total}"}
 
     # ======================
-    # LIST EXPENSES (FIXED)
+    # LIST EXPENSES
     # ======================
 
     if action == "list_expenses":
