@@ -159,12 +159,27 @@ User: 12345
 User: how much did I spend on food this month
 {{
   "action": "analytics",
-  "filters": {
+  "filters": {{
     "category": "Food",
     "title": null,
     "date_from": "this_month",
     "date_to": "today"
-  },
+  }},
+  "aggregation": "sum",
+  "group_by": "none",
+  "limit": null,
+  "sort": null
+}}
+
+User: how much did I spend this month
+{{
+  "action": "analytics",
+  "filters": {{
+    "category": null,
+    "title": null,
+    "date_from": "this_month",
+    "date_to": "today"
+  }},
   "aggregation": "sum",
   "group_by": "none",
   "limit": null,

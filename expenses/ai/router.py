@@ -40,6 +40,13 @@ def resolve_date_range(date_from, date_to):
     return start, end
 
 
+def resolve_expense_date(date_str):
+    today = date.today()
+    if date_str == "yesterday":
+        return today - timedelta(days=1)
+    if date_str and re.match(r"\d{4}-\d{2}-\d{2}", date_str):
+        return date.fromisoformat(date_str)
+    return today  # default to today
 # ======================
 # (OLD FUNCTION - UNUSED BUT KEPT SAFE)
 # ======================
@@ -114,7 +121,7 @@ def execute_ai_command(command, user):
             amount=amount,
             category=category,
             user=user,
-            date=timezone.now().date(),
+            date=resolve_expense_date(command.get("date")),
             note=command.get("note", "")
         )
 
