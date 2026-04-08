@@ -19,7 +19,10 @@ def resolve_date_range(date_from, date_to):
 
     if date_from == "today":
         start = today
-
+        
+    elif date_from == "this_month":
+        start = today.replace(day=1)
+        
     elif date_from == "yesterday":
         start = today - timedelta(days=1)
 
