@@ -154,6 +154,22 @@ User: 12345
 {{
   "action": "unknown"
 }}
+
+
+User: how much did I spend on food this month
+{{
+  "action": "analytics",
+  "filters": {
+    "category": "Food",
+    "title": null,
+    "date_from": "this_month",
+    "date_to": "today"
+  },
+  "aggregation": "sum",
+  "group_by": "none",
+  "limit": null,
+  "sort": null
+}}
 -------------------------
 
 Now extract from:
