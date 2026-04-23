@@ -213,8 +213,8 @@ class AIQueryView(APIView):
   throttle_classes = [AIRateThrottle]   
   def post(self,request):
     message=  request.data.get('message')
-    categories = Category.objects.filter(is_active=True).values_list('name',flat=True)
-    parsed=parse_user_message(message,categories)
+    categories = Category.objects.filter(Q(scope=CategoryScope.GLOBAL) | Q(user=request.user),is_active=True).values_list('name', flat=True)
+    parsed=parse_user_message(message, list(categories))
     result = execute_ai_command(parsed,request.user)
 
     return Response(result)
