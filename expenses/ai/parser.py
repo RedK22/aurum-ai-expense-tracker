@@ -1,13 +1,14 @@
 import json
 from openai import OpenAI
-import os 
+from datetime import date
+import os
 
 OPEN_AI_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPEN_AI_KEY)
 
 
 def parse_user_message(message, categories):
-    today_str = date.today().isoformat()  # inject real date at call time
+    today_str = date.today().isoformat()  # injected at call time so relative dates are always correct
 
     prompt = f"""
 You are a structured data extractor for a personal expense tracker.
@@ -58,31 +59,34 @@ For unknown:
 ========================
 DATE TOKENS — use ONLY these, never invent raw dates
 ========================
-For date_from / date_to and the "date" field in create_expense:
+Use these tokens for date_from, date_to, and the "date" field in create_expense:
 
   "today"         — current date
   "yesterday"     — one day before today
   "this_month"    — start of the current calendar month
-  "last_month"    — start of the previous calendar month (date_to must be null when using this)
+  "last_month"    — start of the previous calendar month
   "N_months_ago"  — e.g. "3_months_ago" means 3 months before today
   "N_days_ago"    — e.g. "2_days_ago" means 2 days before today
-  "YYYY-MM-DD"    — only for create_expense when user gives an explicit date
+  "YYYY-MM-DD"    — only for create_expense when the user gives an explicit calendar date
   null            — no date constraint
 
-CRITICAL RULE — last_month:
-When date_from is "last_month", always set date_to to null.
-The backend will automatically set the end to the last day of last month.
-Do NOT set date_to to "today" for last_month queries — that wrongly includes the current month.
+CRITICAL RULES:
+1. last_month: When date_from is "last_month", always set date_to to null.
+   The backend computes the correct month-end automatically.
+   Never set date_to to "today" for last_month — that wrongly includes the current month.
 
-CRITICAL RULE — never invent dates:
-Never output a literal date string like "2023-04-01" for relative phrases.
-Always use the token system above.
+2. Single-day relative queries (e.g. "2 days ago", "yesterday"):
+   Set both date_from AND date_to to the same token so only that day is queried.
+   Example: "what did I spend 2 days ago" → date_from: "2_days_ago", date_to: "2_days_ago"
+
+3. Never invent raw date strings for relative phrases.
+   "2 days ago" → "2_days_ago", NOT "2025-04-21" or any hardcoded date.
 
 ========================
 AVAILABLE CATEGORIES
 ========================
 {", ".join(categories)}
-If the user's category doesn't match any above, use "Other".
+If the user's category doesn't match any of the above, use "Other".
 
 ========================
 EXAMPLES
@@ -153,11 +157,41 @@ User: what did I spend 2 days ago
   "sort": null
 }}
 
+User: how much did I spend on pizza last month
+{{
+  "action": "analytics",
+  "filters": {{
+    "category": null,
+    "title": "Pizza",
+    "date_from": "last_month",
+    "date_to": null
+  }},
+  "aggregation": "sum",
+  "group_by": "none",
+  "limit": null,
+  "sort": null
+}}
+
 User: how much did I spend this month
 {{
   "action": "analytics",
   "filters": {{
     "category": null,
+    "title": null,
+    "date_from": "this_month",
+    "date_to": "today"
+  }},
+  "aggregation": "sum",
+  "group_by": "none",
+  "limit": null,
+  "sort": null
+}}
+
+User: how much did I spend on food this month
+{{
+  "action": "analytics",
+  "filters": {{
+    "category": "Food",
     "title": null,
     "date_from": "this_month",
     "date_to": "today"
@@ -198,6 +232,21 @@ User: top 3 spending categories this month
   "sort": "desc"
 }}
 
+User: top 3 spent categories
+{{
+  "action": "analytics",
+  "filters": {{
+    "category": null,
+    "title": null,
+    "date_from": null,
+    "date_to": null
+  }},
+  "aggregation": "sum",
+  "group_by": "category",
+  "limit": 3,
+  "sort": "desc"
+}}
+
 User: list food expenses from last 2 months
 {{
   "action": "list_expenses",
@@ -213,11 +262,32 @@ User: list food expenses from last 2 months
   "sort": "desc"
 }}
 
+User: show my expenses yesterday
+{{
+  "action": "list_expenses",
+  "filters": {{
+    "category": null,
+    "title": null,
+    "date_from": "yesterday",
+    "date_to": "yesterday"
+  }},
+  "aggregation": "none",
+  "group_by": "none",
+  "limit": null,
+  "sort": "desc"
+}}
+
 User: asdfghjkl
-{{ "action": "unknown" }}
+{{"action": "unknown"}}
+
+User: hello there
+{{"action": "unknown"}}
 
 User: what is the capital of France?
-{{ "action": "unknown" }}
+{{"action": "unknown"}}
+
+User: 12345
+{{"action": "unknown"}}
 
 ========================
 Now extract from:
@@ -225,19 +295,18 @@ User: {message}
 """
 
     response = client.chat.completions.create(
-        model='gpt-4o-mini',
+        model="gpt-4o-mini",
         response_format={"type": "json_object"},
         messages=[
-            {"role": "system", "content": "You are an expense tracking assistant."},
+            {"role": "system", "content": "You are an expense tracking assistant. Return only valid JSON."},
             {"role": "user", "content": prompt}
         ]
     )
 
     content = response.choices[0].message.content
-
     print("AI RESPONSE:", content)
 
     try:
         return json.loads(content)
-    except:
+    except Exception:
         return {"action": "unknown"}
