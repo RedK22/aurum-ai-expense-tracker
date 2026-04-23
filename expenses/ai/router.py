@@ -1,6 +1,6 @@
-from expenses.models import Expense, Category
 from django.utils import timezone
-from django.db.models import Sum
+from expenses.models import Expense, Category, CategoryScope
+from django.db.models import Q, Sum
 import re
 
 from dateutil.relativedelta import relativedelta
@@ -134,14 +134,10 @@ def execute_ai_command(command, user):
 
     if action == "create_expense":
 
-        category = Category.objects.filter(
-            name__iexact=command.get("category")
-        ).first()
+        category = Category.objects.filter(Q(scope=CategoryScope.GLOBAL) | Q(user=user),name__iexact=command.get("category"),is_active=True).first()
 
         if not category:
-            category = Category.objects.filter(
-                name__iexact="Other"
-            ).first()
+            category = Category.objects.filter(name__iexact="Other",scope=CategoryScope.GLOBAL).first()
 
         amount = command.get("amount")
 
