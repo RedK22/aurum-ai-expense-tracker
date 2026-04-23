@@ -17,36 +17,68 @@ def resolve_date_range(date_from, date_to):
     start = None
     end = None
 
+    # --- date_from ---
     if date_from == "today":
         start = today
-        
-    elif date_from == "this_month":
-        start = today.replace(day=1)
-        
+
     elif date_from == "yesterday":
         start = today - timedelta(days=1)
 
+    elif date_from == "this_month":
+        start = today.replace(day=1)
+
     elif date_from == "last_month":
-        start = (today.replace(day=1) - relativedelta(months=1))
+        # start = first day of last month
+        # end   = last day of last month (set here, not overridden below)
+        start = today.replace(day=1) - relativedelta(months=1)
         end = today.replace(day=1) - timedelta(days=1)
+
+    elif date_from and "days_ago" in str(date_from):
+        n = int(date_from.split("_")[0])
+        start = today - timedelta(days=n)
 
     elif date_from and "months_ago" in str(date_from):
         n = int(date_from.split("_")[0])
         start = today - relativedelta(months=n)
 
-    if date_to == "today":
-        end = today
+    # --- date_to (only applied when date_from is NOT last_month) ---
+    if date_from != "last_month":
+        if date_to == "today":
+            end = today
+
+        elif date_to == "yesterday":
+            end = today - timedelta(days=1)
+
+        elif date_to and "days_ago" in str(date_to):
+            n = int(date_to.split("_")[0])
+            end = today - timedelta(days=n)
+
+        elif date_to and "months_ago" in str(date_to):
+            n = int(date_to.split("_")[0])
+            end = today - relativedelta(months=n)
 
     return start, end
 
 
 def resolve_expense_date(date_str):
     today = date.today()
+
+    if date_str == "today":
+        return today
+
     if date_str == "yesterday":
         return today - timedelta(days=1)
+
+    if date_str and "days_ago" in str(date_str):
+        n = int(date_str.split("_")[0])
+        return today - timedelta(days=n)
+
     if date_str and re.match(r"\d{4}-\d{2}-\d{2}", date_str):
         return date.fromisoformat(date_str)
+
     return today  # default to today
+
+
 # ======================
 # (OLD FUNCTION - UNUSED BUT KEPT SAFE)
 # ======================
@@ -196,7 +228,7 @@ def execute_ai_command(command, user):
                 "data": data
             }
 
-        # DEFAULT SUM — still inside analytics block
+        # DEFAULT SUM
         total = queryset.aggregate(total=Sum("amount"))["total"] or 0
 
         category = filters.get("category")
