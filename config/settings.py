@@ -64,7 +64,7 @@ MIDDLEWARE = [
 # CORS settings for Next.js frontend
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000","https://rk-expense-tracker.vercel.app"
+    "http://127.0.0.1:3000","https://rk-expense-tracker.vercel.app","https://aurum-et.vercel.app"
 ]
 
 # Allow credentials (cookies, authorization headers, etc.)
