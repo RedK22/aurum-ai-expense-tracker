@@ -16,6 +16,7 @@ from django.utils import timezone
 from django.db import transaction
 from expenses.ai.parser import parse_user_message
 from expenses.ai.router import execute_ai_command
+from django.db.models import ProtectedError
 
 from config.throttles import AuthRateThrottle, AIRateThrottle
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -135,11 +136,20 @@ class CategorySummaryView(APIView):
         return Response(queryset)
 
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
-  serializer_class=CategorySerializer
-  permission_classes=[IsAuthenticated]
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
 
-  def get_queryset(self):
-    return Category.objects.filter(scope = CategoryScope.PRIVATE, user = self.request.user)
+    def get_queryset(self):
+        return Category.objects.filter(scope=CategoryScope.PRIVATE, user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            return Response(
+                {"error": "This category has expenses linked to it and can't be deleted."},
+                status=status.HTTP_409_CONFLICT
+            )
 #======================SIGNUP LOGIN LOGOUT VIEWS===========================
 
 
