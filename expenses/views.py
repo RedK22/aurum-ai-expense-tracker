@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.db import transaction
 from expenses.ai.parser import parse_user_message
 from expenses.ai.router import execute_ai_command
-from django.db.models import ProtectedError
+from django.db.models.deletion import ProtectedError
 
 from config.throttles import AuthRateThrottle, AIRateThrottle
 from rest_framework_simplejwt.views import TokenObtainPairView
