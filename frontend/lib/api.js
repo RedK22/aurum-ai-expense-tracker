@@ -132,8 +132,7 @@ export async function apiRequest(endpoint, options = {}) {
   if (contentType && contentType.includes("application/json")) {
     data = await res.json();
   } else {
-    const text = await res.text();
-    data = text ? JSON.parse(text) : null;
+      data = null;
   }
 
   if (!res.ok) {
