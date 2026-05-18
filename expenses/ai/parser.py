@@ -86,6 +86,7 @@ CRITICAL RULES:
 AVAILABLE CATEGORIES
 ========================
 {", ".join(categories)}
+Check user's query and match the item with existing categories. Example: Petrol Expense = Travel Category, Cold Coffee = Food/Snacks category etc.
 If the user's category doesn't match any of the above, use "Other".
 
 ========================
