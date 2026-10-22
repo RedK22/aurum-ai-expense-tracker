@@ -233,9 +233,13 @@ class AIQueryView(APIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     throttle_classes = [AuthRateThrottle]
 
-    def post(self, request, *args, **kwargs):
-        request.data["username"] = request.data.get("username", "").strip().lower()
-        return super().post(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        if "data" in kwargs and kwargs["data"]:
+            data = kwargs["data"].copy()
+            if "username" in data and isinstance(data["username"], str):
+                data["username"] = data["username"].strip().lower()
+            kwargs["data"] = data
+        return super().get_serializer(*args, **kwargs)
 
  #health
 

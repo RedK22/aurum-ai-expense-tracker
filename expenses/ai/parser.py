@@ -3,8 +3,34 @@ from openai import OpenAI
 from datetime import date
 import os
 
-OPEN_AI_KEY = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=OPEN_AI_KEY)
+def get_ai_client_and_model():
+    """
+    Returns (client, model) supporting both Google Gemini and OpenAI.
+    Allows explicit selection via AI_PROVIDER ('gemini' or 'openai'),
+    or automatically picks based on configured API keys.
+    """
+    provider = os.getenv("AI_PROVIDER", "").strip().lower()
+    gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GEMINI_API")
+    openai_key = os.getenv("OPENAI_API_KEY")
+
+    if provider == "openai":
+        return OpenAI(api_key=openai_key), os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    elif provider == "gemini":
+        return OpenAI(
+            api_key=gemini_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        ), os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+
+    # Auto-detection: prioritize Gemini if provided
+    if gemini_key:
+        return OpenAI(
+            api_key=gemini_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        ), os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+    elif openai_key:
+        return OpenAI(api_key=openai_key), os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    else:
+        return None, None
 
 
 def parse_user_message(message, categories):
@@ -295,19 +321,24 @@ Now extract from:
 User: {message}
 """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": "You are an expense tracking assistant. Return only valid JSON."},
-            {"role": "user", "content": prompt}
-        ]
-    )
-
-    content = response.choices[0].message.content
-    print("AI RESPONSE:", content)
+    client, model = get_ai_client_and_model()
+    if not client or not model:
+        print("AI parsing skipped: neither GEMINI_API_KEY nor OPENAI_API_KEY is configured.")
+        return {"action": "unknown"}
 
     try:
+        response = client.chat.completions.create(
+            model=model,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": "You are an expense tracking assistant. Return only valid JSON."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        content = response.choices[0].message.content
+        print(f"AI RESPONSE ({model}):", content)
         return json.loads(content)
-    except Exception:
+    except Exception as e:
+        print(f"AI parsing error ({model}):", e)
         return {"action": "unknown"}

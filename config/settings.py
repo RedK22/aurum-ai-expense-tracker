@@ -18,7 +18,9 @@ from datetime import timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
-OPENAI_API_KEY=os.getenv('OPENAI_API_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY') or os.getenv('GEMINI_API')
+AI_PROVIDER = os.getenv('AI_PROVIDER', '').strip().lower()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
